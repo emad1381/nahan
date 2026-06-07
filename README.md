@@ -1,13 +1,13 @@
 <div align="center">
-  
-# Project Nahan (پروژه نهان)
-### The Ultimate Serverless Gateway on Cloudflare Workers
 
-**Nahan** (Persian for *Hidden/Concealed*) is a secure, lightweight, and highly customizable reverse proxy running entirely on the Edge. It transforms your Cloudflare Worker into a powerful, obfuscated gateway using VLESS or Trojan protocols, managed via a beautiful, self-contained Web UI.
+# Nahan Project
+### Your Secure and Unlimited Gateway at the Network Edge
+
+**Nahan** is a secure, lightweight, and customizable reverse proxy that runs entirely on Cloudflare Edge. This project turns your virtual server into a powerful gateway supporting both VLESS and Trojan protocols, all managed through a beautiful, self-contained dashboard.
 
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-2.0-0A66C2?style=for-the-badge)]()
+[![Version](https://img.shields.io/badge/Version-2.2-0A66C2?style=for-the-badge)]()
 
 </div>
 
@@ -15,56 +15,54 @@
 
 ## 🌟 Why Nahan?
 
-Nahan isn't just a proxy script; it's a complete management solution designed for stealth, speed, and ease of use.
+Nahan is not just a proxy script; it's a complete connection management solution designed with a focus on **speed**, **security**, and **simplicity**.
 
-*   🛡️ **Hidden in Plain Sight:** Unauthorized access attempts are seamlessly proxied to legitimate sites (like `ubuntu.com` or `docker.com`), making your server look like a regular website to scanners.
-*   ⚡ **Zero Server Cost:** Runs entirely on Cloudflare's Free Tier. No VPS, no server maintenance, just code.
-*   🎨 **Modern Dashboard:** A fully embedded, mobile-friendly dashboard with Dark/Light modes and Dual-Language support (English/فارسی).
-*   🤖 **Telegram Bot Integration:** Manage your gateway, check usage, and receive login alerts directly via Telegram.
-*   📡 **Multi-User & Multi-IP:** Generate unique subscription links for different users (Profiles) and automatically multiply configs across multiple Clean IPs.
+*   🛡️ **Hidden in the Network:** Unauthorized access is automatically redirected to public sites (like Ubuntu or Docker) to keep your server completely invisible to scanners.
+*   ⚡ **Zero Server Cost:** Runs entirely on Cloudflare's free plan. No VPS required, no server maintenance worries.
+*   🎨 **Modern Dashboard:** Responsive user interface supporting dark/light modes and bilingual (English/Persian).
+*   🤖 **Telegram Bot:** Manage your gateway, check usage, and receive login alerts directly via Telegram.
+*   📡 **Multi-user & Multi-IP:** Generate dedicated subscription links for different users and automatically combine them with clean IP lists.
 
 ## ✨ Key Features
 
 | Feature | Description |
 | :--- | :--- |
-| **🔐 Dual Protocol** | Switch instantly between **VLESS** (Alpha) and **Trojan** (Beta) modes. |
-| **📱 QR Code Generation** | Beautiful modal-based QR codes for instant mobile configuration. |
-| **👥 Multi-Sensor Profiles** | Create separate profiles (`uuid:name`) with unique subscription links for different users. |
-| **🌍 Clean IP Multiplexer** | Input a list of Clean IPs, and Nahan automatically generates subscription configs for all of them. |
-| **⚙️ Real-Time Metrics** | View Origin IP, Edge Node location, and run browser-side latency diagnostics. |
-| **💾 KV State Storage** | Configuration persists in Cloudflare KV (`IOT_DB`) even after code updates. |
-| **🚨 Kill Switch** | Immediately pause all proxy traffic with one click from the dashboard or Telegram. |
+| **🔐 Dual Support** | Instant switching between **VLESS** (Alpha mode), **Trojan** (Beta mode), or **Both** simultaneously. |
+| **📱 QR Code Generation** | Display QR codes for each profile for quick and easy setup on mobile devices. |
+| **👥 User Management** | Manage user bandwidth based on TB/GB with pause/resume functionality. Accurate upload and download tracking using D1 Database. |
+| **🌍 Clean IP Combiner** | Input a list of clean IPs; Nahan automatically generates all configs for these IPs. |
+| **🔗 Multi-Node** | Connect multiple workers (Slave Nodes) to a centralized management and get all configs in one sub. |
+| **💾 D1 Database** | Settings are persistently stored in Cloudflare D1 Database, solving KV's write limitations. |
+| **🚨 Emergency Kill Switch** | Immediately cut off all proxy traffic with a single click from the dashboard or Telegram. |
 
-## 🚀 Quick Start
+## 🚀 Quick Setup Guide
 
-Get your gateway running in under 2 minutes.
+Set up your gateway in less than 2 minutes.
 
-### 1. Create a KV Namespace
-1. Go to **Cloudflare Dashboard** → **Workers & Pages** → **KV**.
-2. Create a namespace named `IOT_DB`.
+### 1. Create a D1 Database
+1. Go to the **Cloudflare** dashboard → **Storage and databases** → **D1 SQLite Database**.
+2. Create a new database (suggested name: `iot_db`).
 
 ### 2. Deploy the Worker
-1. Go to **Workers & Pages** → **Create Application** → **Create Worker**.
-2. Name your worker (e.g., `nahan-core`) and click **Deploy**.
-3. Click **Edit code**, paste the Nahan script, and save.
+1. Go to **Workers & Pages** and click **Create Application**, then **Create Worker**.
+2. Choose a name (e.g., `nahan-core`), paste the content of `_worker.js` script into it, and click Deploy.
 
-### 3. Bind Storage
-1. Go to your Worker → **Settings** → **Bindings**.
-2. Under **KV Namespace Bindings**, add:
-   *   **Variable name:** `IOT_DB`
-   *   **KV namespace:** Select the namespace you created.
-3. Save and Redeploy.
+### 3. Bind D1 Database to the Worker
+1. In your newly created worker's panel, go to **Bindings**.
+2. Click on **Add Binding** and select **D1 database**.
+3. In the **Variable name** field, enter exactly `IOT_DB` (regardless of your actual database name).
+4. In the **D1 Database** field, select the database you created in step 1.
+5. Save the changes.
 
-### 4. Access & Configure
-1. Open `https://<your-worker>/sync/dash`.
-2. Login with the default key: `admin`.
-3. Configure your UUID, Clean IPs, and Protocols.
+### 4. Login and Configuration
+1. Open `https://<your-worker-url.workers.dev>/sync/dash`.
+2. Log in with the default key: `admin`. If you updated your panel from 2.1.0 version, the password is admin again.
+3. Apply your settings (UUID, clean IPs, protocols, etc.).
 
-> **⚠️ Important:** Change the default Master Key in the **System** tab immediately after logging in.
+> **⚠️ Security Warning:** Immediately after logging in, change your Master Key in the **System** tab!
 
 ## 📖 Documentation
-
-For a full breakdown of dashboard features, check out the [User Guide](HELP.md).
+For a comprehensive guide on dashboard features and how to connect other workers (Slave Nodes), please read the [User Guide](HELP.md).
 
 ---
 
