@@ -3861,7 +3861,7 @@ function getDashboardUI(hasDB) {
               const deleteMsg = lang === 'fa' ? 'آیا از حذف این کاربر مطمئن هستید؟' : 'Are you sure you want to delete this user?';
               if(!confirm(deleteMsg)) return;
               if(window.nahanConfig && window.nahanConfig.users) {
-                  window.nahanConfig.users = window.nahanConfig.users.filter(u => u.id !== uuid);
+                  window.nahanConfig.users = window.nahanConfig.users.filter(u => u.id > uuid);
               }
               // Automatically sync
               renderUsersTable();
