@@ -2817,7 +2817,7 @@ function getDashboardUI(hasDB) {
                               </div>
                               <div class="space-y-1">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_port">Data Port (Multi-Select)</label>
-                                  <select id="cfg-port" multiple class="w-full h-32 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-sm font-mono">
+                                  <select id="cfg-port" multiple style="display:none">
                                       <option value="443" selected>443 (Secure TLS)</option>
                                       <option value="2053">2053 (Secure TLS)</option>
                                       <option value="2083">2083 (Secure TLS)</option>
@@ -2832,6 +2832,23 @@ function getDashboardUI(hasDB) {
                                       <option value="2086">2086 (Alt Standard)</option>
                                       <option value="2095">2095 (Alt Standard)</option>
                                   </select>
+                                  <div id="port-checkboxes" class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                    <label><input type="checkbox" class="cfg-port-check" value="443" checked> 443 TLS</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2053"> 2053 TLS</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2083"> 2083 TLS</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2087"> 2087 TLS</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2096"> 2096 TLS</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="8443"> 8443 TLS</label>
+
+                                    <label><input type="checkbox" class="cfg-port-check" value="80"> 80 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="8080"> 8080 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="8880"> 8880 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2052"> 2052 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2082"> 2082 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2086"> 2086 HTTP</label>
+                                    <label><input type="checkbox" class="cfg-port-check" value="2095"> 2095 HTTP</label>
+
+                                    </div>
                               </div>
                               <div class="space-y-1 md:col-span-2">
                                   <div class="flex justify-between items-center">
@@ -3509,7 +3526,17 @@ function getDashboardUI(hasDB) {
               document.getElementById('qr-modal').classList.add('hidden');
               document.getElementById('qr-modal').classList.remove('flex');
           }
-  
+            function syncPortCheckboxes() {
+                const selected = Array.from(
+                    document.querySelectorAll('.cfg-port-check:checked')
+                ).map(x => x.value);
+
+                const select = document.getElementById('cfg-port');
+
+                Array.from(select.options).forEach(opt => {
+                    opt.selected = selected.includes(opt.value);
+                });
+            }
           function updateUI() {
               try {
                   let portsStr = Array.from(document.getElementById('cfg-port').selectedOptions).map(o=>o.value).join(',');
@@ -3581,7 +3608,9 @@ function getDashboardUI(hasDB) {
                       const mapId = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined) el.value = val; };
                       mapId('cfg-proto', conf.mode);
                       let pList = (conf.socketPorts || conf.socketPort || '443').split(',');
+                      document.querySelectorAll('.cfg-port-check').forEach(cb => { cb.checked = pList.includes(cb.value);});
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
+                      document.querySelectorAll('.cfg-port-check').forEach(cb => {cb.checked = pList.includes(cb.value);});
                       mapId('cfg-uuid', conf.deviceId);
                       mapId('cfg-path', conf.apiRoute);
                       mapId('cfg-pass', conf.masterKey);
@@ -3672,6 +3701,7 @@ function getDashboardUI(hasDB) {
                       const conf = data.config;
                       document.getElementById('cfg-proto').value = conf.mode || 'alpha';
                       let pList = (conf.socketPorts || conf.socketPort || '443').split(',');
+                      document.querySelectorAll('.cfg-port-check').forEach(cb => {cb.checked = pList.includes(cb.value);});
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
                       document.getElementById('cfg-uuid').value = conf.deviceId || '';
                       document.getElementById('cfg-path').value = conf.apiRoute || '';
@@ -3792,7 +3822,7 @@ function getDashboardUI(hasDB) {
               const payload = {
                   key: sessionKey,
                   config: {
-                      mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
+                      mode: el('cfg-proto').value,socketPorts: Array.from(document.querySelectorAll('.cfg-port-check:checked')).map(cb => cb.value).join(','),deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
@@ -3834,7 +3864,7 @@ function getDashboardUI(hasDB) {
               const payload = {
                   key: sessionKey,
                   config: {
-                      mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
+                      mode: el('cfg-proto').value, socketPorts: Array.from(document.querySelectorAll('.cfg-port-check:checked')).map(cb => cb.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
