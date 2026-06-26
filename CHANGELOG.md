@@ -9,6 +9,50 @@ All notable changes to Project Nahan will be documented in this file.
 
 ---
 
+## [2.9.0] - ۱۴۰۵-۰۴-۰۴ (2026-06-26)
+
+<!-- LANG:FA -->
+### اضافه شده (Added)
+- **مسیریابی آی‌پی رله به‌ازای هر کانفیگ تروjan**: نودهای تروjan اکنون از طریق پیلود مسیر وب‌ساکت، آی‌پی رله تعیین‌شده خود را دریافت می‌کنند (مانند VLESS).
+- **زنجیره بازگشت سه‌گانه استخراج شاخص رله**: پارامتر کوئری → بخش عددی مسیر → پیلود JSON باینری.
+- **محدودیت اتصال دستگاه برای هر کاربر (connLimit)**: محدود کردن اتصالات همزمان هر مشترک.
+- **سیستم کلید API پنل**: احراز هویت امن اتصال نود به پنل.
+- **فرم‌های کاربر سازگار با موبایل**: طرح‌بندی واکنش‌گرا بهبودیافته برای فرم‌های افزودن/ویرایش.
+
+### رفع شده (Fixed)
+- **رفع خطای افست هدر تروjan** (hPos+2 → hPos+4): اتصالات تروjan ۲ بایت اول پس از فیلد پورت را حذف می‌کردند.
+- **رفع رمز عبور تروjan**: رمز عبور به‌جای configUuid تولیدشده از UUID خام کاربر استفاده می‌کند.
+- **ثبت هش SHA224**: افزودن هش SHA224 در configRegistry برای جستجوی تروjan.
+- **حذف فیلدهای اضافی**: حذف میزبان‌های نگهداری و کلید API همگام‌سازی از بخش آدرس پروکسی پیشرفته.
+
+### بهبود یافته (Improved)
+- **مسیریابی آی‌پی رله تروjan**: استفاده از قالب پیلود JSON باینری مسیر وب‌ساکت مانند VLESS.
+- **解析 آدرس رله**: استفاده از getEffectivePips با پشتیبانی NAT64 برای هر دو پروتکل.
+- **متغیر reqPath**: افزودن به buildYamlProfile برای تولید مسیر یکپارچه.
+<!-- LANG:FA -->
+
+<!-- LANG:EN -->
+### Added
+- **Per-config relay IP routing for Trojan**: Trojan nodes now route through their designated relay IP via WebSocket path payload, matching VLESS behavior (USA→USA, Germany→Germany).
+- **Triple-fallback relay index extraction**: Query parameter → numeric path segment → base64 JSON payload.
+- **Device connection limit per user (connLimit)**: Cap simultaneous connections per subscriber.
+- **Panel API key system**: Secure node-to-panel authentication with multiple key support.
+- **Mobile-friendly user modals**: Improved responsive layout for add/edit user forms.
+
+### Fixed
+- **Trojan header offset parsing** (hPos+2 → hPos+4): Trojan connections were silently dropping the first 2 bytes of payload after the port field.
+- **Trojan password regression**: Password was set to generated configUuid instead of raw user UUID — clients could never authenticate because SHA224(configUuid) ≠ SHA224(p.id).
+- **SHA224 hash registration**: Added to configRegistry so Trojan lookup works when isolate is warm.
+- **Advanced tab cleanup**: Removed Maintenance Hosts (Camouflage) and Sync API Key (Slave Push) from Proxy Relay IP section.
+
+### Improved
+- **Trojan relay IP routing**: Uses same base64 JSON WebSocket path payload as VLESS for maximum client compatibility.
+- **Relay IP resolution**: Uses getEffectivePips with NAT64 awareness for both VLESS and Trojan protocols.
+- **reqPath variable**: Added to buildYamlProfile for consistent path generation.
+<!-- LANG:EN -->
+
+---
+
 ## [2.6.0] - ۱۴۰۵-۰۴-۰۳ (2026-06-24)
 
 <!-- LANG:FA -->
