@@ -896,18 +896,21 @@ async function serveMaintenancePage(request, url) {
         if (url.pathname !== "/") targetUrl.pathname = url.pathname;
         targetUrl.search = url.search;
         
-        const cleanHeaders = new Headers();
-        for (const [key, value] of request.headers.entries()) {
-            const lowerKey = key.toLowerCase();
-            if (
-                !lowerKey.startsWith("cf-") &&
-                !lowerKey.startsWith("x-") &&
-                lowerKey !== "cdn-loop" &&
-                lowerKey !== "host"
-            ) {
-                cleanHeaders.set(key, value);
-            }
-        }
+        const cleanHeaders = new Headers(request.headers);
+        const headersToDelete = [
+            "cf-connecting-ip",
+            "cf-ray",
+            "cf-visitor",
+            "cf-ipcountry",
+            "cf-warp-info",
+            "cf-worker",
+            "cdn-loop",
+            "x-forwarded-for",
+            "x-forwarded-proto",
+            "x-real-ip",
+            "host"
+        ];
+        headersToDelete.forEach(h => cleanHeaders.delete(h));
         cleanHeaders.set("Host", targetUrl.hostname);
         
         const fetchInit = {
