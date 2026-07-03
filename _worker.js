@@ -7402,6 +7402,12 @@ async function buildUriProfile(
                         lines.push(
                             `${getAlpha()}://${configUuid}@${ip}:${port}?${extBase}#${vName}`,
                         );
+                        // Add specialized YouTube Bypass config with fragment parameters to bypass SNI throttling
+                        let ytExtBase = extBase + "&fragment=10-20,2-5";
+                        let ytName = "🚀 YouTube Bypass-" + vName;
+                        lines.push(
+                            `${getAlpha()}://${configUuid}@${ip}:${port}?${ytExtBase}#${ytName}`,
+                        );
                     }
                     if (effectiveMode === "beta" || effectiveMode === "both") {
                         let randomJunk = Array.from(
@@ -9012,11 +9018,11 @@ function getDashboardUI(hasDB) {
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
       <meta name="mobile-web-app-capable" content="yes">
       <meta name="theme-color" content="#0d1117">
-      <meta name="apple-mobile-web-app-title" content="Nahan">
+      <meta name="apple-mobile-web-app-title" content="Penhan">
       <meta name="format-detection" content="telephone=no">
       <meta name="msapplication-tap-highlight" content="no">
-      <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
-      <title>Nahan Gateway</title>
+      <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>">
+      <title>Penhan Gateway</title>
       <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
       <script src="https://cdn.tailwindcss.com"></script>
       <script>
@@ -9104,6 +9110,14 @@ function getDashboardUI(hasDB) {
           html:not(.dark) #login-box, html:not(.dark) #dash-box {
               background: #f8fafc !important;
               background-color: #f8fafc !important;
+          }
+          html:not(.dark) main > header {
+              background: rgba(248, 250, 252, 0.8) !important;
+              border-bottom: 1px solid #e2e8f0 !important;
+          }
+          html.dark main > header {
+              background: rgba(13, 17, 23, 0.75) !important;
+              border-bottom: 1px solid rgba(99, 102, 241, 0.15) !important;
           }
           html:not(.dark) aside {
               background-color: #ffffff !important;
@@ -9390,7 +9404,7 @@ function getDashboardUI(hasDB) {
                           <svg class="w-9 h-9" style="color:#a5b4fc" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                       </div>
                   </div>
-                  <h2 class="text-3xl font-black" style="color:#f1f5f9;" data-i18n="title">Nahan Gateway</h2>
+                  <h2 class="text-3xl font-black" style="color:#f1f5f9;" data-i18n="title">Penhan Gateway</h2>
                   <p class="text-sm mt-2" style="color:#64748b;">Sign in to manage your gateway</p>
               </div>
               <div class="rounded-3xl p-px" style="background:linear-gradient(145deg,rgba(99,102,241,0.45),rgba(99,102,241,0.08) 50%,rgba(139,92,246,0.3));box-shadow:0 25px 60px rgba(0,0,0,0.5);">
@@ -9431,7 +9445,7 @@ function getDashboardUI(hasDB) {
               <div class="flex items-center p-6 border-b border-slate-100 dark:border-darkborder/50">
                   <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-primary flex items-center justify-center me-3 shrink-0"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
                   <div class="flex flex-col">
-                      <h1 class="font-black text-xl leading-none" data-i18n="title">Nahan</h1>
+                      <h1 class="font-black text-xl leading-none" data-i18n="title">Penhan</h1>
                       <span id="app-version" class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">v${CURRENT_VERSION}</span>
                   </div>
               </div>
@@ -10699,7 +10713,7 @@ function getDashboardUI(hasDB) {
               const bindingNames = uniqueBindings.map(b => b.name);
 
               const finalLoaderCode = rawImportsStr + '\\n\\n' +
-                  '// Nahan Gateway - Obfuscated Loader Context (v2.5.4.2 Optimized)\\n' +
+                  '// Penhan Gateway - Obfuscated Loader Context (v2.5.4.2 Optimized)\\n' +
                   'const _0xNahanPayload = "' + hexOutput + '";\\n' +
                   'const _0xNahanKey = ' + randKey + ';\\n\\n' +
                   'const _0xNahanBytes = new Uint8Array((_0xNahanPayload.match(/.{1,2}/g) || []).map(x => parseInt(x, 16) ^ _0xNahanKey));\\n' +
@@ -10713,7 +10727,7 @@ function getDashboardUI(hasDB) {
           const CURRENT_VERSION = "${CURRENT_VERSION}";
           const i18n = {
               en: {
-                  title: "Nahan Gateway", pass_ph: "Master Key", login_btn: "Authenticate", err_pass: "Access Denied", missing_db: "⚠️ IOT_DB namespace missing! Settings won't save.",
+                  title: "Penhan Gateway", pass_ph: "Master Key", login_btn: "Authenticate", err_pass: "Access Denied", missing_db: "⚠️ IOT_DB namespace missing! Settings won't save.",
                   logout: "Disconnect", tab_overview: "Overview", tab_info: "Endpoints", tab_status: "Metrics", tab_settings: "System", tab_adv: "Advanced", tab_logs: "Activity Logs",
                   qr_title: "Direct Stream Link", badge_multi: "Dual-Core Multiplexed", copy: "Copy", copied: "Copied to clipboard!", sync_link: "Cloud Sync URL", active_id: "Hardware ID",
                   stat_ip: "Origin IP", stat_dc: "Edge Node", stat_loc: "Data Region",
@@ -10805,7 +10819,7 @@ function getDashboardUI(hasDB) {
                     html_desc_strategy: "Supported placeholders: <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{FLAG}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{COUNTRY}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{CITY}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{ISP}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{PROTOCOL}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{USER}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{PORT}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{PREFIX}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{IP}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{HOST}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{DATE}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{INDEX}</code>, <code class='bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono'>{WORKER}</code>.<br><span class='text-[10px] text-slate-400 dark:text-slate-500 leading-snug'>• <b>{FLAG}</b>: Country flag emoji (e.g. 🇺🇸).<br>• <b>{COUNTRY}</b>: Country name (e.g. United States).<br>• <b>{CITY}</b>: City name (e.g. San Francisco).<br>• <b>{ISP}</b>: ISP / ASN org (e.g. Cloudflare, Inc.).<br>• <b>{PROTOCOL}</b>: Core mode (VLESS / Trojan).<br>• <b>{USER}</b>: Subscriber name.<br>• <b>{PORT}</b>: Active port.<br>• <b>{PREFIX}</b>: Custom prefix.<br>• <b>{IP}</b>: Clean IP address.<br>• <b>{HOST}</b>: Hostname.<br>• <b>{DATE}</b>: Current date (YYYY-MM-DD).<br>• <b>{INDEX}</b>: Config index (0, 1, 2...).<br>• <b>{WORKER}</b>: Worker name from config.</span><br>Pre-defined strategies: <code>default</code>, <code>type-user-port</code>, <code>user-port</code>, <code>host-port-user</code>, <code>prefix-user-port</code>, <code>ip</code>.",
                },
               fa: {
-                  title: "دروازه نهان", pass_ph: "کلید اصلی", login_btn: "ورود به سیستم", err_pass: "دسترسی مسدود شد", missing_db: "⚠️ فضای پایگاه داده یافت نشد! تنظیمات ذخیره نمی‌شوند.",
+                  title: "دروازه پنهان", pass_ph: "کلید اصلی", login_btn: "ورود به سیستم", err_pass: "دسترسی مسدود شد", missing_db: "⚠️ فضای پایگاه داده یافت نشد! تنظیمات ذخیره نمی‌شوند.",
                   logout: "خروج", tab_overview: "نمای کلی", tab_info: "نقاط اتصال", tab_status: "وضعیت شبکه", tab_settings: "تنظیمات پایه", tab_adv: "پیشرفته", tab_logs: "گزارش فعالیت",
                   qr_title: "لینک اتصال مستقیم", badge_multi: "ترکیب ترانزیت پیشرفته دوگانه", copy: "کپی", copied: "در حافظه کپی شد!", sync_link: "لینک ساب (همگام سازی ابری)", active_id: "شناسه سخت‌افزار",
                   stat_ip: "آی‌پی مبدا", stat_dc: "گره لبه", stat_loc: "منطقه داده",
