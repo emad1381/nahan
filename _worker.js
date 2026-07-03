@@ -881,7 +881,18 @@ async function serveMaintenancePage(request, url) {
               .split(",")
               .map((s) => s.trim())
               .filter((s) => s)
-        : ["https://www.ubuntu.com"];
+        : [];
+    
+    // Check if the list contains default hosts or is empty
+    const isDefaultOrEmpty = fakeList.length === 0 || 
+        fakeList.some(host => host.includes("ubuntu.com") || host.includes("docker.com"));
+        
+    if (isDefaultOrEmpty) {
+        return new Response(getStaticCamouflageUI(), {
+            headers: { "Content-Type": "text/html; charset=utf-8" }
+        });
+    }
+
     const clientIP = request.headers.get("cf-connecting-ip") || "0.0.0.0";
     const ipHash = Array.from(clientIP).reduce(
         (acc, char) => acc + char.charCodeAt(0),
@@ -13233,5 +13244,115 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
       </script>
   </body>
   </html>
+    `;
+}
+
+function getStaticCamouflageUI() {
+    return `
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Portfolio | Edge Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f3f4f6;
+        }
+        .glow {
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500/30">
+    <!-- Background grid/pattern -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-950 to-slate-950 -z-10"></div>
+    <div class="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] -z-10"></div>
+
+    <header class="w-full max-w-5xl mx-auto px-6 py-6 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+                E
+            </div>
+            <span class="font-semibold text-lg tracking-wide bg-gradient-to-r from-indigo-200 to-purple-300 bg-clip-text text-transparent">EdgeDev</span>
+        </div>
+        <nav class="flex items-center gap-6 text-sm text-slate-400">
+            <a href="#about" class="hover:text-indigo-400 transition-colors">About</a>
+            <a href="#projects" class="hover:text-indigo-400 transition-colors">Projects</a>
+            <a href="mailto:contact@edgedev.net" class="px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 hover:text-white transition-all">Contact</a>
+        </nav>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center max-w-4xl mx-auto px-6 py-12 text-center">
+        <!-- Hero Tag -->
+        <span class="px-3 py-1 text-xs font-semibold tracking-wide text-indigo-400 bg-indigo-500/10 rounded-full border border-indigo-500/20 mb-6 animate-pulse">
+            Available for freelance projects
+        </span>
+
+        <!-- Hero Title -->
+        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 bg-gradient-to-b from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+            Building High-Performance<br>
+            <span class="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Edge Computing Solutions</span>
+        </h1>
+
+        <!-- Hero Description -->
+        <p class="text-slate-400 text-base sm:text-lg max-w-xl leading-relaxed mb-10">
+            I specialize in serverless architectures, real-time data streaming, and IoT telemetry gateways. Empowering networks with low latency and secure protocols.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-16">
+            <a href="#projects" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium shadow-lg shadow-indigo-600/25 transition-all glow">
+                View Work
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 font-medium transition-all">
+                GitHub Profile
+            </a>
+        </div>
+
+        <!-- Featured Projects Grid -->
+        <div id="projects" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
+            <div class="p-6 rounded-2xl bg-slate-950/40 border border-slate-900 hover:border-slate-800/80 transition-all group">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
+                    ⚡
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-2">Telemetry Pipeline</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    A real-time telemetry processing gateway built entirely on serverless edge nodes for high scalability and sub-10ms processing latency.
+                </p>
+            </div>
+            <div class="p-6 rounded-2xl bg-slate-950/40 border border-slate-900 hover:border-slate-800/80 transition-all group">
+                <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+                    🛡️
+                </div>
+                <h3 class="text-lg font-semibold text-white mb-2">Secure Routing Matrix</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    Custom encrypted reverse-proxy system providing dynamic geolocation routing and network metrics collection.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full max-w-5xl mx-auto px-6 py-8 border-t border-slate-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <p>&copy; 2026 EdgeDev Solutions. All rights reserved.</p>
+        <p>Powered by Cloudflare Edge Network</p>
+    </footer>
+</body>
+</html>
     `;
 }
