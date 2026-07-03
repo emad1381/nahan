@@ -8441,6 +8441,7 @@ async function buildSingBoxJsonProfile(
     let outboundsArr = [];
     let dynamicTags = [];
     let nameCounts = {};
+    let proxyGeoInfo = new Map(); // proxyName -> {country, flag}
 
     // Add fake configs
     let fakeNames = getFakeConfigNames(targetSub);
