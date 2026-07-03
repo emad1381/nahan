@@ -58,6 +58,7 @@ const SYSTEM_DEFAULTS = {
     users: [],
     subUserAgent: "",
     customPanelUrl: "",
+    enableServerless: false,
     limitTotalReq: 0,
     expiryMs: 0,
     linkedPanels: [],
@@ -821,6 +822,22 @@ export default {
                                 headers: resHeaders,
                             },
                         );
+                    } else if (flag === "serverless") {
+                        if (!sysConfig.enableServerless) {
+                            return new Response("Serverless configs are disabled", { status: 403 });
+                        }
+                        resHeaders.set(
+                            "Content-Type",
+                            "application/json; charset=utf-8",
+                        );
+                        return new Response(
+                            JSON.stringify(
+                                await buildServerlessJsonConfig(clientHost, targetSub),
+                                null,
+                                2
+                            ),
+                            { headers: resHeaders }
+                        );
                     } else {
                         resHeaders.set(
                             "Content-Type",
@@ -1009,6 +1026,8 @@ function serveSubscriptionInfoPage(user, host, url, request) {
     let syncNormal = cleanUrl.href;
     let syncRaw =
         cleanUrl.href + (cleanUrl.href.includes("?") ? "&flag=a" : "?flag=a");
+    let syncServerless =
+        cleanUrl.href + (cleanUrl.href.includes("?") ? "&format=serverless" : "?format=serverless");
 
     const html = `<!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -1254,6 +1273,25 @@ function serveSubscriptionInfoPage(user, host, url, request) {
             </div>
         </div>
 
+        {{#if enableServerless}}
+        <!-- Serverless JSON Config Card -->
+        <div class="card-inner p-5 rounded-2xl relative">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <span class="text-xs font-bold" style="color: var(--blue-text);" data-i18n="serverlessLink">Serverless JSON Sync URL</span>
+                    <p class="text-[11px] text-secondary mt-1" data-i18n="serverlessDesc">Xray JSON profiles for v2rayNG/v2rayN (Serverless-for-Iran)</p>
+                </div>
+            </div>
+            <div class="relative flex items-center">
+                <input type="text" id="sub-serverless" readonly value="${syncServerless}" class="input-field w-full px-4 py-3 rounded-xl text-xs font-mono pr-16 truncate outline-none" style="color: var(--text-secondary);">
+                <div class="absolute right-2 flex gap-1">
+                    <button onclick="copyLink('sub-serverless')" class="btn-primary px-3 py-2 rounded-lg text-xs font-bold transition-colors" data-i18n="copy">Copy</button>
+                </div>
+            </div>
+            <p class="text-[10px] text-muted mt-2" data-i18n="serverlessNote">Import this URL in v2rayNG/v2rayN to get Serverless JSON profiles.</p>
+        </div>
+        {{/if}}
+
         <!-- Action Buttons -->
         <div class="pt-5 border-t grid grid-cols-1 sm:grid-cols-2 gap-4" style="border-color: var(--border-inner);">
             <button onclick="fetchDecodedRawContent()" class="py-3 px-6 btn-primary rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2">
@@ -1415,6 +1453,16 @@ function serveSubscriptionInfoPage(user, host, url, request) {
             el.select();
             navigator.clipboard.writeText(el.value);
             showToast(I18N[currentLang].copied);
+        }
+
+        async function copyServerlessJSON() {
+            try {
+                const json = await buildServerlessJsonConfig('${clientHost}', '${targetSub}');
+                await navigator.clipboard.writeText(JSON.stringify(json, null, 2));
+                showToast(I18N[currentLang].serverlessCopied);
+            } catch (e) {
+                alert(I18N[currentLang].serverlessError + ': ' + e.message);
+            }
         }
 
         async function fetchDecodedRawContent() {
@@ -7505,6 +7553,331 @@ async function buildUriProfile(
     return lines.join("\n");
 }
 
+async function buildServerlessJsonConfig(clientHost, targetSub = null) {
+    // Load clean IPs from config
+    let cleanIps = sysConfig.cleanIps
+        ? sysConfig.cleanIps
+              .split("\n")
+              .map(s => s.trim())
+              .filter(Boolean)
+              .map(line => {
+                  let [ip, name] = line.split("#");
+                  return { ip: ip.trim(), name: name ? name.trim() : "CleanIP" };
+              })
+        : [];
+    
+    if (cleanIps.length === 0) {
+        cleanIps = [{ ip: "1.1.1.1", name: "Cloudflare" }]; // fallback
+    }
+    
+    // Use the first clean IP for DNS mapping
+    const dnsIp = cleanIps[0].ip;
+    
+    // Build common DNS config
+    const dnsConfig = {
+        "hosts": {
+            "cloudflare-dns.com": "challenges.cloudflare.com"
+        },
+        "servers": [
+            {
+                "address": "fakedns",
+                "domains": [
+                    "domain:ir",
+                    "geosite:private",
+                    "geosite:category-ir",
+                    "geosite:xai",
+                    "geosite:openai",
+                    "geosite:google-deepmind",
+                    "geosite:anthropic",
+                    "geosite:github",
+                    "geosite:microsoft",
+                    "geosite:golang",
+                    "geosite:python",
+                    "geosite:rust",
+                    "full:challenges.cloudflare.com"
+                ]
+            },
+            {
+                "tag": "no-filter-dns",
+                "address": `https://${dnsIp}/dns-query`,
+                "timeoutMs": 12000,
+                "finalQuery": true
+            },
+            {
+                "address": "localhost",
+                "domains": [
+                    "domain:ir",
+                    "geosite:private",
+                    "geosite:category-ir",
+                    "geosite:xai",
+                    "geosite:openai",
+                    "geosite:google-deepmind",
+                    "geosite:anthropic",
+                    "geosite:github",
+                    "geosite:microsoft",
+                    "geosite:golang",
+                    "geosite:python",
+                    "geosite:rust",
+                    "full:challenges.cloudflare.com"
+                ],
+                "finalQuery": true
+            }
+        ],
+        "queryStrategy": "UseSystem",
+        "useSystemHosts": true,
+        "serveStale": true
+    };
+    
+    // Build common inbound
+    const inboundConfig = [
+        {
+            "tag": "mixed-in",
+            "port": 10808,
+            "protocol": "mixed",
+            "sniffing": {
+                "enabled": true,
+                "destOverride": ["fakedns", "tls", "http", "quic"],
+                "routeOnly": false
+            },
+            "settings": {
+                "udp": true,
+                "ip": "127.0.0.1"
+            },
+            "streamSettings": {
+                "sockopt": {
+                    "tcpKeepAliveInterval": 1,
+                    "tcpKeepAliveIdle": 11
+                }
+            }
+        }
+    ];
+    
+    // Build common outbounds
+    const outboundBlock = {
+        "tag": "block",
+        "protocol": "block"
+    };
+    
+    const outboundTcpDirect = {
+        "tag": "tcp-direct",
+        "protocol": "direct",
+        "streamSettings": {
+            "sockopt": {
+                "domainStrategy": "ForceIP",
+                "happyEyeballs": {
+                    "tryDelayMs": 300,
+                    "prioritizeIPv6": true,
+                    "interleave": 2,
+                    "maxConcurrentTry": 20
+                }
+            }
+        }
+    };
+    
+    const outboundUdpDirect = {
+        "tag": "udp-direct",
+        "protocol": "direct",
+        "settings": {
+            "targetStrategy": "ForceIPv6v4"
+        }
+    };
+    
+    const outboundDnsOut = {
+        "tag": "dns-out",
+        "protocol": "dns",
+        "settings": {
+            "userLevel": 1
+        }
+    };
+    
+    // Build routing rules
+    const routingRules = [
+        {"outboundTag": "tcp-fragment", "inboundTag": ["no-filter-dns"]},
+        {"outboundTag": "dns-out", "port": 53},
+        {
+            "outboundTag": "tcp-direct",
+            "network": "tcp",
+            "domain": [
+                "domain:ir", "geosite:private", "geosite:category-ir",
+                "geosite:xai", "geosite:openai", "geosite:google-deepmind",
+                "geosite:anthropic", "geosite:github", "geosite:microsoft",
+                "geosite:golang", "geosite:python", "geosite:rust"
+            ]
+        },
+        {
+            "outboundTag": "udp-direct",
+            "network": "udp",
+            "domain": [
+                "domain:ir", "geosite:private", "geosite:category-ir",
+                "geosite:xai", "geosite:openai", "geosite:google-deepmind",
+                "geosite:anthropic", "geosite:github", "geosite:microsoft",
+                "geosite:golang", "geosite:python", "geosite:rust"
+            ]
+        },
+        {"outboundTag": "block", "ip": ["10.10.34.0/24", "2001:4188:2:600::/64"]},
+        {"outboundTag": "tcp-direct", "network": "tcp", "ip": ["geoip:private", "geoip:ir"]},
+        {"outboundTag": "udp-direct", "network": "udp", "ip": ["geoip:private", "geoip:ir"]},
+        {"outboundTag": "udp-noises", "network": "udp", "protocol": ["quic"], "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "udp-noises", "network": "udp", "port": "443", "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "udp-direct", "network": "udp", "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "tcp-fragment", "network": "tcp", "protocol": ["tls"], "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "tcp-fragment", "network": "tcp", "port": "443", "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "tcp-fragment", "network": "tcp", "ip": ["0.0.0.0/0", "::/0"]},
+        {"outboundTag": "block", "port": "0-65535"}
+    ];
+    
+    // Build low_delay profile
+    const lowDelayProfile = {
+        "__Credits__": {
+            "creator": "@patterniha",
+            "donate1": "USDT (BEP20): 0x76a768B53Ca77B43086946315f0BDF21156bF424",
+            "donate2": "USDT (TRC20): TU5gKvKqcXPn8itp1DouBCwcqGHMemBm8o",
+            "donate3": "TON (TON): UQAc-mZB3y7uxWHKiMmq0ORZEYgycWDWZ4V1k73HsXvTJx-i"
+        },
+        "remarks": "Serverless-v44-low_delay",
+        "version": {
+            "min": "26.6.1"
+        },
+        "log": {
+            "loglevel": "warning",
+            "dnsLog": false,
+            "access": "none"
+        },
+        "policy": {
+            "levels": {
+                "0": {
+                    "uplinkOnly": 0,
+                    "downlinkOnly": 0
+                },
+                "1": {
+                    "uplinkOnly": 0,
+                    "downlinkOnly": 0,
+                    "connIdle": 12
+                }
+            }
+        },
+        "dns": dnsConfig,
+        "inbounds": inboundConfig,
+        "outbounds": [
+            outboundBlock,
+            outboundTcpDirect,
+            outboundUdpDirect,
+            outboundDnsOut,
+            {
+                "tag": "tcp-fragment",
+                "protocol": "direct",
+                "streamSettings": {
+                    "finalmask": {
+                        "tcp": [
+                            {
+                                "type": "fragment",
+                                "settings": {
+                                    "packets": "1-1",
+                                    "length": "1",
+                                    "delay": "1",
+                                    "maxSplit": "163"
+                                }
+                            }
+                        ]
+                    },
+                    "sockopt": {
+                        "domainStrategy": "ForceIP",
+                        "happyEyeballs": {
+                            "tryDelayMs": 300,
+                            "prioritizeIPv6": true,
+                            "interleave": 2,
+                            "maxConcurrentTry": 20
+                        }
+                    }
+                }
+            },
+            {
+                "tag": "tcp-fragment-tls",
+                "protocol": "direct",
+                "streamSettings": {
+                    "finalmask": {
+                        "tcp": [
+                            {
+                                "type": "fragment",
+                                "settings": {
+                                    "packets": "1-1",
+                                    "length": "1",
+                                    "delay": "1",
+                                    "maxSplit": "163"
+                                }
+                            },
+                            {
+                                "type": "fragment",
+                                "settings": {
+                                    "packets": "tlshello",
+                                    "length": "124",
+                                    "delay": "0",
+                                    "maxSplit": "0"
+                                }
+                            }
+                        ]
+                    },
+                    "sockopt": {
+                        "domainStrategy": "ForceIP",
+                        "happyEyeballs": {
+                            "tryDelayMs": 300,
+                            "prioritizeIPv6": true,
+                            "interleave": 2,
+                            "maxConcurrentTry": 20
+                        }
+                    }
+                }
+            },
+            {
+                "tag": "udp-noises",
+                "protocol": "direct",
+                "settings": {
+                    "targetStrategy": "ForceIPv6v4"
+                },
+                "streamSettings": {
+                    "finalmask": {
+                        "udp": [
+                            {
+                                "type": "noise",
+                                "settings": {
+                                    "reset": "28",
+                                    "noise": Array(22).fill({
+                                        "rand": "1200-1230",
+                                        "delay": "10"
+                                    })
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "routing": {
+            "domainStrategy": "IPOnDemand",
+            "rules": routingRules
+        }
+    };
+    
+    // Build high_delay profile (only difference is delay value)
+    const highDelayProfile = JSON.parse(JSON.stringify(lowDelayProfile));
+    highDelayProfile.remarks = "Serverless-v44-high_delay";
+    
+    // Update delay values in tcp-fragment and tcp-fragment-tls
+    const updateDelay = (obj, path, value) => {
+        let current = obj;
+        const keys = path.split('.');
+        for (let i = 0; i < keys.length - 1; i++) {
+            current = current[keys[i]];
+        }
+        current[keys[keys.length - 1]] = value;
+    };
+    
+    updateDelay(highDelayProfile, 'outbounds.4.streamSettings.finalmask.tcp.0.settings.delay', '11');
+    updateDelay(highDelayProfile, 'outbounds.5.streamSettings.finalmask.tcp.0.settings.delay', '11');
+    
+    return [lowDelayProfile, highDelayProfile];
+}
+
 async function buildYamlProfile(
     hostName,
     targetSub = null,
@@ -9111,14 +9484,6 @@ function getDashboardUI(hasDB) {
               background: #f8fafc !important;
               background-color: #f8fafc !important;
           }
-          html:not(.dark) main > header {
-              background: rgba(248, 250, 252, 0.8) !important;
-              border-bottom: 1px solid #e2e8f0 !important;
-          }
-          html.dark main > header {
-              background: rgba(13, 17, 23, 0.75) !important;
-              border-bottom: 1px solid rgba(99, 102, 241, 0.15) !important;
-          }
           html:not(.dark) aside {
               background-color: #ffffff !important;
               border-inline-end: 1px solid #e2e8f0 !important;
@@ -9489,7 +9854,7 @@ function getDashboardUI(hasDB) {
 
           <!-- MAIN CONTENT AREA -->
           <main class="flex-1 flex flex-col h-full overflow-hidden">
-              <header class="h-14 md:h-24 shrink-0 flex items-center px-4 md:px-10 z-10 pt-[env(safe-area-inset-top,0px)] md:pt-0" style="background:rgba(13,17,23,0.75);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);">
+              <header class="h-14 md:h-24 shrink-0 flex items-center px-4 md:px-10 z-10 pt-[env(safe-area-inset-top,0px)] md:pt-0 bg-slate-50/75 dark:bg-darkbg/75 border-b border-slate-200/50 dark:border-darkborder/30" style="backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);">
                   <h2 id="view-title" class="text-lg md:text-3xl font-black text-slate-800 dark:text-white mt-0 md:mt-2">Overview</h2>
               </header>
 
@@ -9553,35 +9918,35 @@ function getDashboardUI(hasDB) {
                       <div id="view-overview" class="space-y-3 md:space-y-6 block">
                           <!-- User Summary Cards -->
                           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
-                              <div class="native-press bg-white dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
+                              <div class="native-press bg-slate-50 dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_total_users">Total Users</span>
                                       <div class="p-1.5 md:p-2 bg-primary/10 text-primary rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656-.126-1.283-.356-1.857M12 4.354a4 4 0 110 5.292"></path></svg></div>
                                   </div>
                                   <p id="ov-total-users" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white">-</p>
                               </div>
-                              <div class="native-press bg-white dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
+                              <div class="native-press bg-slate-50 dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_active_users">Active</span>
                                       <div class="p-1.5 md:p-2 bg-emerald-500/10 text-emerald-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                   </div>
                                   <p id="ov-active-users" class="text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400">-</p>
                               </div>
-                              <div class="native-press bg-white dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
+                              <div class="native-press bg-slate-50 dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_paused_users">Paused</span>
                                       <div class="p-1.5 md:p-2 bg-amber-500/10 text-amber-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                   </div>
                                   <p id="ov-paused-users" class="text-xl md:text-2xl font-black text-amber-600 dark:text-amber-400">-</p>
                               </div>
-                              <div class="native-press bg-white dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
+                              <div class="native-press bg-slate-50 dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_auto_disabled">Auto-Disabled</span>
                                       <div class="p-1.5 md:p-2 bg-red-500/10 text-red-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg></div>
                                   </div>
                                   <p id="ov-auto-disabled" class="text-xl md:text-2xl font-black text-red-600 dark:text-red-400">-</p>
                               </div>
-                              <div class="native-press bg-white dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
+                              <div class="native-press bg-slate-50 dark:bg-darkcard rounded-xl md:rounded-2xl p-3 md:p-4 shadow-sm border border-slate-200 dark:border-darkborder">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_expired_users">Expired</span>
                                       <div class="p-1.5 md:p-2 bg-slate-500/10 text-slate-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
@@ -9950,7 +10315,7 @@ function getDashboardUI(hasDB) {
                       <div id="view-advanced" class="hidden space-y-4">
 
                           <!-- Section: Network & DNS -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🌐</span>
@@ -9962,7 +10327,7 @@ function getDashboardUI(hasDB) {
                                   <div class="space-y-4 px-5 pb-5 pt-1">
                                       <div>
                                           <div class="flex items-center justify-between mb-2">
-                                              <label class="text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_clean_ips">Clean IPs (Multi-Generator)</label>
+                                              <label class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_clean_ips">Clean IPs (Multi-Generator)</label>
                                               <span class="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded-md font-bold" id="ip-count-badge">1 Config Set</span>
                                           </div>
                                           <textarea id="cfg-ips" rows="3" data-i18n="ph_clean_ips" placeholder="1.2.3.4#Germany&#10;5.6.7.8#US&#10;9.10.11.12#France" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
@@ -9974,17 +10339,17 @@ function getDashboardUI(hasDB) {
                                       </div>
                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div class="space-y-1">
-                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_fp">TLS Signature</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_fp">TLS Signature</label>
                                               <select id="cfg-fp" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none appearance-none">
                                                   <option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="safari">Safari</option>
                                               </select>
                                           </div>
                                           <div class="space-y-1">
-                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_dns">Resolver IP</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_dns">Resolver IP</label>
                                               <input type="text" id="cfg-dns" placeholder="1.1.1.1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                           </div>
                                           <div class="space-y-1 md:col-span-2">
-                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_doh">Custom DNS (DoH Provider)</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_doh">Custom DNS (DoH Provider)</label>
                                               <input type="text" id="cfg-custom-dns" placeholder="https://cloudflare-dns.com/dns-query" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                           </div>
                                       </div>
@@ -9993,7 +10358,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Proxy & Relay -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🔗</span>
@@ -10004,17 +10369,17 @@ function getDashboardUI(hasDB) {
                               <div data-accordion-content class="transition-all duration-300" style="max-height:0;overflow:hidden;visibility:hidden">
                                   <div class="space-y-4 px-5 pb-5 pt-1">
                                       <div class="space-y-1">
-                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_relay">Proxy IPs (Comma/Newline separated)</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_relay">Proxy IPs (Comma/Newline separated)</label>
                                           <textarea id="cfg-relay" rows="3" placeholder="104.20.0.1&#10;proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
                                       </div>
                                       <div class="space-y-1">
-                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_nat64">NAT64 Prefix</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_nat64">NAT64 Prefix</label>
                                           <textarea id="cfg-nat64" rows="2" placeholder="64:ff9b::/96&#10;2001:db8:64::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
                                           <p class="text-xs text-slate-400 mt-1" data-i18n="desc_nat64">Optional. Converts IPv4 Proxy IPs to NAT64 IPv6 addresses. Supports multiple prefixes (one per line).</p>
                                       </div>
                                       <label class="flex items-center justify-between cursor-pointer bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl">
                                           <div>
-                                              <span class="text-sm font-bold text-slate-700 dark:text-slate-300" data-i18n="lbl_direct_configs">Include Direct Configs</span>
+                                              <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_direct_configs">Include Direct Configs</span>
                                               <p class="text-[10px] text-slate-400 mt-0.5">Generate configs without Proxy IP alongside relay configs</p>
                                           </div>
                                           <div class="relative inline-flex items-center cursor-pointer">
@@ -10027,7 +10392,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Subscription -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">📝</span>
@@ -10039,14 +10404,14 @@ function getDashboardUI(hasDB) {
                                   <div class="space-y-4 px-5 pb-5 pt-1">
                                       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                           <div class="space-y-1">
-                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_strategy">Configuration Name Strategy</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_strategy">Configuration Name Strategy</label>
                                               <input type="text" id="cfg-name-strategy" placeholder="{FLAG} {PROTOCOL}-{USER}-{PORT}" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
                                               <p data-i18n="html_desc_strategy" class="text-[11px] text-slate-400 dark:text-slate-500 mt-1 leading-relaxed">
                                                   Supported templates: <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">default</code>, <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">type-user-port</code>, <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">user-port</code>, <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">host-port-user</code>, <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">prefix-user-port</code>, <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">ip</code>. Tags: <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">{FLAG}</code> <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">{IP_NAME}</code> <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">{USER}</code> <code class="bg-slate-100 dark:bg-slate-800/80 px-1 py-0.5 rounded text-rose-500 font-mono">{PORT}</code>
                                               </p>
                                           </div>
                                           <div class="space-y-1">
-                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_prefix">Custom Name Prefix</label>
+                                              <label class="block text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_prefix">Custom Name Prefix</label>
                                               <input type="text" id="cfg-name-prefix" placeholder="Core" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                           </div>
                                        </div>
@@ -10068,7 +10433,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Protocol -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">⚡</span>
@@ -10119,6 +10484,46 @@ function getDashboardUI(hasDB) {
                                </div>
                            </div>
 
+                          <!-- Section: Serverless Config -->
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                              <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                  <div class="flex items-center gap-3">
+                                      <span class="text-lg">⚡</span>
+                                      <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="adv_serverless">Serverless Config</span>
+                                  </div>
+                                  <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                              </button>
+                              <div data-accordion-content class="transition-all duration-300" style="max-height:0;overflow:hidden;visibility:hidden">
+                                  <div class="space-y-4 px-5 pb-5 pt-1">
+                                      <div>
+                                          <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="desc_serverless">Generate Xray JSON profiles for v2rayNG/v2rayN (Serverless-for-Iran). These profiles use direct routing with fragment/noise to bypass SNI throttling.</p>
+                                      </div>
+                                      <label class="flex items-center justify-between cursor-pointer bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl">
+                                          <div>
+                                              <span class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_enable_serverless">Enable Serverless Configs</span>
+                                              <p class="text-[10px] text-slate-400 mt-0.5" data-i18n="desc_enable_serverless">Include Serverless JSON profiles in subscription links</p>
+                                          </div>
+                                          <div class="relative inline-flex items-center cursor-pointer">
+                                              <input type="checkbox" id="cfg-enable-serverless" class="sr-only peer">
+                                              <div class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-primary"></div>
+                                          </div>
+                                      </label>
+                                      <div class="border-t border-slate-100 dark:border-darkborder pt-4">
+                                          <div class="flex items-center justify-between mb-3">
+                                              <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200" data-i18n="lbl_serverless_json">Serverless JSON Config</h4>
+                                          </div>
+                                          <div class="bg-slate-100 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-darkborder">
+                                              <p class="text-xs text-slate-500 dark:text-slate-400 mb-3" data-i18n="desc_serverless_json">Copy the Xray JSON configuration for v2rayNG/v2rayN. This config uses direct routing with fragment/noise to bypass SNI throttling for Iranian domains.</p>
+                                              <button onclick="copyServerlessJSON()" class="w-full py-2.5 px-4 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
+                                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                  <span data-i18n="btn_copy_json">Copy JSON Config</span>
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+
                           <!-- Modal: Add Other Node -->
                            <div id="modal-add-node" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 pb-4 sm:p-4 bg-slate-900/50 backdrop-blur-sm">
                                <div class="bg-white dark:bg-darkcard rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[calc(100vh-2rem)] sm:max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 dark:border-darkborder">
@@ -10145,7 +10550,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Telegram -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🤖</span>
@@ -10179,7 +10584,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Cloudflare -->
-                          <div class="bg-white dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
+                          <div class="bg-slate-50 dark:bg-darkcard rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">☁️</span>
@@ -10807,6 +11212,18 @@ function getDashboardUI(hasDB) {
                     lbl_auto_update: "Auto-Update", desc_auto_update: "Automatically deploy when a new version is detected",
                     lbl_auto_update_format: "Update Format", format_normal_label: "Normal", format_obfuscated_label: "Obfuscated",
                     desc_format_normal: "Standard _worker.js", desc_format_obfuscated: "XOR byte-shifting",
+                    adv_serverless: "Serverless Config",
+                    lbl_enable_serverless: "Enable Serverless Configs",
+                    desc_enable_serverless: "Include Serverless JSON profiles in subscription links",
+                    lbl_serverless_json: "Serverless JSON Config",
+                    desc_serverless: "Generate Xray JSON profiles for v2rayNG/v2rayN (Serverless-for-Iran). These profiles use direct routing with fragment/noise to bypass SNI throttling.",
+                    desc_serverless_json: "Copy the Xray JSON configuration for v2rayNG/v2rayN. This config uses direct routing with fragment/noise to bypass SNI throttling for Iranian domains.",
+                    btn_copy_json: "Copy JSON Config",
+                    serverlessCopied: "Serverless JSON copied to clipboard!",
+                    serverlessError: "Failed to generate Serverless JSON",
+                    serverlessLink: "Serverless JSON Sync URL",
+                    serverlessDesc: "Xray JSON profiles for v2rayNG/v2rayN (Serverless-for-Iran)",
+                    serverlessNote: "Import this URL in v2rayNG/v2rayN to get Serverless JSON profiles.",
                     lbl_clean_ips: "Clean IPs", lbl_proxy_ips: "Proxy IPs", lbl_assigned_nodes: "Assigned Nodes",
                     lbl_protocol_mode: "Protocol Mode", lbl_max_configs: "Max Configs",
                     desc_assigned_nodes: "Custom Nodes (comma/newline, empty = all nodes)",
@@ -10870,6 +11287,18 @@ function getDashboardUI(hasDB) {
                     lbl_auto_update: "بروزرسانی خودکار", desc_auto_update: "دپلوی خودکار هنگام شناسایی نسخه جدید",
                     lbl_auto_update_format: "قالب بروزرسانی", format_normal_label: "معمولی", format_obfuscated_label: "مبهم‌سازی شده",
                     desc_format_normal: "استاندارد _worker.js", desc_format_obfuscated: "جابجایی بایت XOR",
+                    adv_serverless: "پیکربندی سرورلس",
+                    lbl_enable_serverless: "فعالسازی پیکربندی سرورلس",
+                    desc_enable_serverless: "شامل پروفایلهای JSON سرورلس در لینکهای اشتراک",
+                    lbl_serverless_json: "پیکربندی JSON سرورلس",
+                    desc_serverless: "تولید پروفایلهای JSON برای v2rayNG/v2rayN (سرورلس برای ایران). این پروفایلها از مسیریابی مستقیم با قطعهبندی/نویز برای دور زدن محدودیت SNI استفاده میکنند.",
+                    desc_serverless_json: "پیکربندی JSON برای v2rayNG/v2rayN را کپی کنید. این تنظیمات از مسیریابی مستقیم با قطعهبندی/نویز برای دور زدن محدودیت SNI دامنههای ایرانی استفاده میکند.",
+                    btn_copy_json: "کپی JSON",
+                    serverlessCopied: "پیکربندی JSON سرورلس در حافظه کپی شد!",
+                    serverlessError: "خطا در تولید JSON سرورلس",
+                    serverlessLink: "لینک همگامسازی JSON سرورلس",
+                    serverlessDesc: "پروفایلهای JSON برای v2rayNG/v2rayN (سرورلس برای ایران)",
+                    serverlessNote: "این لینک را در v2rayNG/v2rayN وارد کنید تا پروفایلهای JSON سرورلس دریافت کنید.",
                     lbl_clean_ips: "آی‌پی‌های تمیز", lbl_proxy_ips: "آی‌پی‌های پروکسی", lbl_assigned_nodes: "نودهای اختصاصی",
                     lbl_protocol_mode: "پروتکل", lbl_max_configs: "حداکثر کانفیگ",
                     desc_assigned_nodes: "نودهای سفارشی (کاما/خط جدید، خالی = همه نودها)",
@@ -11644,7 +12073,9 @@ function getDashboardUI(hasDB) {
               const payload = {
                   mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                   apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
-                   resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false, syncApiKey: el('cfg-sync-api-key') ? el('cfg-sync-api-key').value.trim() : '', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
+                   resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false,
+                  enableServerless: el('cfg-enable-serverless') ? el('cfg-enable-serverless').checked : false,
+                  syncApiKey: el('cfg-sync-api-key') ? el('cfg-sync-api-key').value.trim() :', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
                    enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                    tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value, tgAdminId: el('cfg-tg-admin').value,
                   cfAccountId: el('cfg-cf-acc').value, cfApiToken: el('cfg-cf-token').value,
@@ -11702,6 +12133,7 @@ function getDashboardUI(hasDB) {
                       if (conf.silentAlerts !== undefined) document.getElementById('cfg-silent').checked = conf.silentAlerts;
                       mapId('cfg-nat64', conf.nat64Prefix);
                       if (conf.enableDirectConfigs !== undefined && document.getElementById('cfg-direct-configs')) document.getElementById('cfg-direct-configs').checked = conf.enableDirectConfigs;
+                      if (conf.enableServerless !== undefined && document.getElementById('cfg-enable-serverless')) document.getElementById('cfg-enable-serverless').checked = conf.enableServerless;
                       if (document.getElementById('cfg-sync-api-key')) document.getElementById('cfg-sync-api-key').value = conf.syncApiKey || '';
                       if (conf.autoUpdate !== undefined && document.getElementById('cfg-auto-update')) {
                           document.getElementById('cfg-auto-update').checked = conf.autoUpdate;
@@ -11943,7 +12375,9 @@ function getDashboardUI(hasDB) {
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
-                      resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false, syncApiKey: el('cfg-sync-api-key') ? el('cfg-sync-api-key').value.trim() : '', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
+                      resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false,
+                  enableServerless: el('cfg-enable-serverless') ? el('cfg-enable-serverless').checked : false,
+                  syncApiKey: el('cfg-sync-api-key') ? el('cfg-sync-api-key').value.trim() :', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                       tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value, tgAdminId: el('cfg-tg-admin').value,
                       cfAccountId: el('cfg-cf-acc').value, cfApiToken: el('cfg-cf-token').value,
