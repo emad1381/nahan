@@ -895,10 +895,21 @@ async function serveMaintenancePage(request, url) {
         const targetUrl = new URL(targetStr);
         if (url.pathname !== "/") targetUrl.pathname = url.pathname;
         targetUrl.search = url.search;
-        const cleanHeaders = new Headers(request.headers);
+        
+        const cleanHeaders = new Headers();
+        for (const [key, value] of request.headers.entries()) {
+            const lowerKey = key.toLowerCase();
+            if (
+                !lowerKey.startsWith("cf-") &&
+                !lowerKey.startsWith("x-") &&
+                lowerKey !== "cdn-loop" &&
+                lowerKey !== "host"
+            ) {
+                cleanHeaders.set(key, value);
+            }
+        }
         cleanHeaders.set("Host", targetUrl.hostname);
-        cleanHeaders.delete("cf-connecting-ip");
-        cleanHeaders.delete("x-forwarded-for");
+        
         const fetchInit = {
             method: request.method,
             headers: cleanHeaders,
