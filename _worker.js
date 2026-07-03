@@ -750,10 +750,21 @@ export default {
                             ua.includes("hiddify") ||
                             ua.includes("nekobox") ||
                             ua.includes("sfa") ||
-                            ua.includes("karing") ||
-                            ua.includes("v2rayng")
+                            ua.includes("karing")
                         ) {
                             isSingboxJson = true;
+                        } else if (
+                            ua.includes("v2rayng") ||
+                            ua.includes("v2ray") ||
+                            ua.includes("xray") ||
+                            ua.includes("shadowrocket") ||
+                            ua.includes("quantumult") ||
+                            ua.includes("surfboard") ||
+                            ua.includes("stash")
+                        ) {
+                            // v2rayNG, v2ray, Xray, Shadowrocket, Quantumult, Surfboard, Stash
+                            // These clients expect standard Base64 encoded URI format (vmess://, vless://, trojan://)
+                            // Do nothing - falls through to default buildUriProfile behavior
                         }
                     }
 
