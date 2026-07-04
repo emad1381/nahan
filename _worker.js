@@ -823,9 +823,6 @@ export default {
                             },
                         );
                     } else if (flag === "serverless") {
-                        if (!sysConfig.enableServerless) {
-                            return new Response("Serverless configs are disabled", { status: 403 });
-                        }
                         resHeaders.set(
                             "Content-Type",
                             "application/json; charset=utf-8",
@@ -1273,7 +1270,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
             </div>
         </div>
 
-        {{#if enableServerless}}
+        ${sysConfig.enableServerless ? `
         <!-- Serverless JSON Config Card -->
         <div class="card-inner p-5 rounded-2xl relative">
             <div class="flex items-center justify-between mb-3">
@@ -1289,8 +1286,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                 </div>
             </div>
             <p class="text-[10px] text-muted mt-2" data-i18n="serverlessNote">Import this URL in v2rayNG/v2rayN to get Serverless JSON profiles.</p>
-        </div>
-        {{/if}}
+        </div>` : ""}
 
         <!-- Action Buttons -->
         <div class="pt-5 border-t grid grid-cols-1 sm:grid-cols-2 gap-4" style="border-color: var(--border-inner);">
@@ -1457,7 +1453,9 @@ function serveSubscriptionInfoPage(user, host, url, request) {
 
         async function copyServerlessJSON() {
             try {
-                const json = await buildServerlessJsonConfig('${clientHost}', '${targetSub}');
+                const res = await fetch('${syncServerless}');
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const json = await res.json();
                 await navigator.clipboard.writeText(JSON.stringify(json, null, 2));
                 showToast(I18N[currentLang].serverlessCopied);
             } catch (e) {
