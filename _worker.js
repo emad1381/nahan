@@ -143,7 +143,7 @@ async function d1Init(env) {
             ).run();
             env.IOT_DB_INITIALIZED = true;
         } catch (e) {
-            env.IOT_DB_INITIALIZED = true;
+            // Keep initialization false to retry on transient errors next time
         }
     }
 }
@@ -3423,6 +3423,9 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             const storedState = await d1Get(env, "tg_bot_state");
             if (storedState) tgState = JSON.parse(storedState);
         } catch (e) {}
+        if (!tgState || typeof tgState !== 'object') {
+            tgState = {};
+        }
 
         const panels = getPanelsList();
 
@@ -5401,7 +5404,8 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                 );
             }
         } else if (update.message && update.message.text) {
-            const chatId = update.message.chat.id;
+            const chatId = update.message.chat?.id;
+            if (!chatId) return new Response("OK", { status: 200 });
             const text = update.message.text.trim();
 
             if (isAuthorized) {
