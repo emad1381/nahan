@@ -580,6 +580,13 @@ export default {
                     const clientHost =
                         request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
+                    let flag = (
+                        url.searchParams.get("flag") ||
+                        url.searchParams.get("format") ||
+                        url.searchParams.get("type") ||
+                        url.searchParams.get("output") ||
+                        ""
+                    ).toLowerCase();
                     let hasMultiUser =
                         sysConfig.users && sysConfig.users.length > 0;
 
@@ -625,7 +632,7 @@ export default {
                         !ua.includes("surf" + "board") &&
                         !ua.includes("sta" + "sh");
 
-                    if (isRealBrowser && !isCustomUaAllowed) {
+                    if (isRealBrowser && !isCustomUaAllowed && !flag) {
                         if (isValidUser) {
                             return serveSubscriptionInfoPage(
                                 targetUser,
@@ -654,14 +661,6 @@ export default {
                     const resHeaders = new Headers();
                     resHeaders.set("Cache-Control", "no-store");
                     resHeaders.set("Access-Control-Allow-Origin", "*");
-
-                    let flag = (
-                        url.searchParams.get("flag") ||
-                        url.searchParams.get("format") ||
-                        url.searchParams.get("type") ||
-                        url.searchParams.get("output") ||
-                        ""
-                    ).toLowerCase();
 
                     if (isValidUser && targetUser) {
                         let idClean = targetUser.id
@@ -698,10 +697,11 @@ export default {
                         resHeaders.set("Profile-Update-Interval", "12");
                         resHeaders.set("profile-update-interval", "12");
 
+                        let fallbackName = targetUser.name.replace(/[^\x20-\x7E]/g, "_").replace(/["\\]/g, "_");
                         let cleanName = encodeURIComponent(targetUser.name);
                         resHeaders.set(
                             "Content-Disposition",
-                            `attachment; filename="${cleanName}"; filename*=UTF-8''${cleanName}`,
+                            `attachment; filename="${fallbackName}"; filename*=UTF-8''${cleanName}`,
                         );
                     }
 
@@ -952,6 +952,18 @@ async function serveMaintenancePage(request, url) {
 }
 
 function serveSubscriptionInfoPage(user, host, url, request) {
+    const escapeHtml = (str) => {
+        if (!str) return "";
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+    const safeUserName = escapeHtml(user.name);
+    const safeUserId = escapeHtml(user.id);
+
     let idClean = user.id.replace(/-/g, "").toLowerCase();
     let sysU = sysUsageCache?.users?.[idClean] || {
         reqs: 0,
@@ -1026,12 +1038,16 @@ function serveSubscriptionInfoPage(user, host, url, request) {
     let syncServerless =
         cleanUrl.href + (cleanUrl.href.includes("?") ? "&format=serverless" : "?format=serverless");
 
+    const jsSyncNormal = JSON.stringify(syncNormal);
+    const jsSyncRaw = JSON.stringify(syncRaw);
+    const jsSyncServerless = JSON.stringify(syncServerless);
+
     const html = `<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${user.name} - Subscriber Portal</title>
+    <title>${safeUserName} - Subscriber Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"><\/script>
     <script>
@@ -1182,8 +1198,8 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-black tracking-tight" style="color: var(--text-primary);">${user.name}</h1>
-                    <p class="text-xs mt-1 font-mono" style="color: var(--text-muted);">${user.id}</p>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight" style="color: var(--text-primary);">${safeUserName}</h1>
+                    <p class="text-xs mt-1 font-mono" style="color: var(--text-muted);">${safeUserId}</p>
                 </div>
             </div>
             <div class="shrink-0">
@@ -1260,7 +1276,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                     </div>
                 </div>
                 <div class="relative flex items-center">
-                    <input type="text" id="sub-norm" readonly value="${syncNormal}" class="input-field w-full px-4 py-3 rounded-xl text-xs font-mono pr-16 truncate outline-none" style="color: var(--text-secondary);">
+                    <input type="text" id="sub-norm" readonly value="${escapeHtml(syncNormal)}" class="input-field w-full px-4 py-3 rounded-xl text-xs font-mono pr-16 truncate outline-none" style="color: var(--text-secondary);">
                     <div class="absolute right-2 flex gap-1">
                         <button onclick="copyLink('sub-norm')" class="btn-primary px-3 py-2 rounded-lg text-xs font-bold transition-colors" data-i18n="copy">Copy</button>
                         <button onclick="showQRModal()" class="btn-secondary px-3 py-2 rounded-lg text-xs font-bold transition-colors" data-i18n="qr">QR</button>
@@ -1280,9 +1296,10 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                 </div>
             </div>
             <div class="relative flex items-center">
-                <input type="text" id="sub-serverless" readonly value="${syncServerless}" class="input-field w-full px-4 py-3 rounded-xl text-xs font-mono pr-16 truncate outline-none" style="color: var(--text-secondary);">
+                <input type="text" id="sub-serverless" readonly value="${escapeHtml(syncServerless)}" class="input-field w-full px-4 py-3 rounded-xl text-xs font-mono pr-28 truncate outline-none" style="color: var(--text-secondary);">
                 <div class="absolute right-2 flex gap-1">
-                    <button onclick="copyLink('sub-serverless')" class="btn-primary px-3 py-2 rounded-lg text-xs font-bold transition-colors" data-i18n="copy">Copy</button>
+                    <button onclick="copyLink('sub-serverless')" class="btn-secondary px-2.5 py-2 rounded-lg text-xs font-bold transition-colors" data-i18n="copy">Copy</button>
+                    <button onclick="copyServerlessJSON()" class="btn-primary px-2.5 py-2 rounded-lg text-xs font-bold transition-colors">JSON</button>
                 </div>
             </div>
             <p class="text-[10px] text-muted mt-2" data-i18n="serverlessNote">Import this URL in v2rayNG/v2rayN to get Serverless JSON profiles.</p>
@@ -1344,7 +1361,12 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                 paused: 'Paused',
                 expired: 'Expired',
                 limitExceeded: 'Limit Exceeded',
-                dailyLimitExceeded: 'Daily Limit Exceeded'
+                dailyLimitExceeded: 'Daily Limit Exceeded',
+                serverlessLink: 'Serverless JSON Sync URL',
+                serverlessDesc: 'Xray JSON profiles for v2rayNG/v2rayN (Serverless-for-Iran)',
+                serverlessNote: 'Import this URL in v2rayNG/v2rayN to get Serverless JSON profiles.',
+                serverlessCopied: 'Serverless JSON copied to clipboard!',
+                serverlessError: 'Failed to generate Serverless JSON'
             },
             fa: {
                 totalUsage: 'مصرف کل',
@@ -1372,7 +1394,12 @@ function serveSubscriptionInfoPage(user, host, url, request) {
                 paused: 'متوقف',
                 expired: 'منقضی',
                 limitExceeded: 'از حد مجاز رد شده',
-                dailyLimitExceeded: 'از حد روزانه رد شده'
+                dailyLimitExceeded: 'از حد روزانه رد شده',
+                serverlessLink: 'لینک همگام‌سازی سرورلس JSON',
+                serverlessDesc: 'پروفایل‌های JSON سرورلس برای v2rayNG/v2rayN مخصوص ایران',
+                serverlessNote: 'این لینک را در v2rayNG/v2rayN ایمپورت کنید تا پروفایل‌های سرورلس دریافت شوند.',
+                serverlessCopied: 'سرورلس JSON کپی شد!',
+                serverlessError: 'خطا در دریافت سرورلس JSON'
             }
         };
 
@@ -1453,7 +1480,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
 
         async function copyServerlessJSON() {
             try {
-                const res = await fetch('${syncServerless}');
+                const res = await fetch(${jsSyncServerless});
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const json = await res.json();
                 await navigator.clipboard.writeText(JSON.stringify(json, null, 2));
@@ -1465,10 +1492,15 @@ function serveSubscriptionInfoPage(user, host, url, request) {
 
         async function fetchDecodedRawContent() {
             try {
-                const res = await fetch('${syncRaw}');
+                const res = await fetch(${jsSyncRaw});
                 if(!res.ok) throw new Error('Failed');
                 const base64Str = await res.text();
-                const decodedText = atob(base64Str.trim());
+                const binaryStr = atob(base64Str.trim());
+                const bytes = new Uint8Array(binaryStr.length);
+                for (let i = 0; i < binaryStr.length; i++) {
+                    bytes[i] = binaryStr.charCodeAt(i);
+                }
+                const decodedText = new TextDecoder('utf-8').decode(bytes);
                 await navigator.clipboard.writeText(decodedText);
                 showToast(I18N[currentLang].decodedCopied);
             } catch(e) {
@@ -1479,8 +1511,8 @@ function serveSubscriptionInfoPage(user, host, url, request) {
         function showQRModal() {
             const t = I18N[currentLang];
             document.getElementById('qr-title').innerText = t.qrTitle;
-            document.getElementById('qr-text').innerText = '${syncNormal}';
-            document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent('${syncNormal}');
+            document.getElementById('qr-text').innerText = ${jsSyncNormal};
+            document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(${jsSyncNormal});
             document.getElementById('qr-modal').classList.remove('hidden');
             document.getElementById('qr-modal').classList.add('flex');
         }
@@ -12328,7 +12360,7 @@ function getDashboardUI(hasDB) {
             \${conf.enableServerless ? \`
                         <div class="relative mt-2">
                             <label class="block text-[10px] font-semibold text-violet-500 uppercase tracking-wider mb-1 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>Serverless JSON Sync URL</label>
-                            <input type="text" id="sync-serverless-\${p.id}" readonly value="\${p.sync}&format=serverless" class="w-full bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-4 py-2.5 rounded-xl text-xs outline-none font-mono text-slate-600 dark:text-slate-400 truncate pe-12">
+                            <input type="text" id="sync-serverless-\${p.id}" readonly value="\${p.sync}\${p.sync.includes('?') ? '&' : '?'}format=serverless" class="w-full bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-4 py-2.5 rounded-xl text-xs outline-none font-mono text-slate-600 dark:text-slate-400 truncate pe-12">
                             <button data-id="serverless-\${p.id}" onclick="handleCopy(this)" class="absolute bottom-1 end-1 text-primary p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md"><svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
                         </div>
                         \` : ''}
