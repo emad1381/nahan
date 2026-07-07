@@ -9498,28 +9498,73 @@ function getDashboardUI(hasDB) {
       <meta name="msapplication-tap-highlight" content="no">
       <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>P</text></svg>">
       <title>پنهان — Penhan Gateway</title>
-      <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
       <script src="https://cdn.tailwindcss.com"></script>
       <script>
           tailwind.config = {
               darkMode: 'class',
               theme: {
                   extend: {
-                      fontFamily: { sans: ['Vazirmatn', 'Inter', 'sans-serif'] },
+                      fontFamily: {
+                          'headline-lg': ['Lexend'],
+                          'headline-md': ['Lexend'],
+                          'display-lg': ['Lexend'],
+                          'body-md': ['Inter'],
+                          'body-sm': ['Inter'],
+                          'label-md': ['Inter'],
+                          'mono-code': ['JetBrains Mono'],
+                          'sans': ['Vazirmatn', 'Inter', 'sans-serif']
+                      },
                       colors: {
-                          primary: '#a855f7',
-                          secondary: '#22d3ee',
-                          accent: '#c084fc',
-                          darkbg: '#06070d',
-                          darkcard: 'rgba(20, 22, 36, 0.55)',
-                          darkborder: 'rgba(168, 85, 247, 0.18)'
-                      }
+                          primary: '#8aebff',
+                          'primary-container': '#22d3ee',
+                          'primary-fixed-dim': '#2fd9f4',
+                          'on-primary': '#00363e',
+                          'on-primary-container': '#005763',
+                          secondary: '#ddb7ff',
+                          'secondary-container': '#6f00be',
+                          tertiary: '#dad9ff',
+                          'tertiary-container': '#babbff',
+                          surface: '#0b1326',
+                          'surface-dim': '#0b1326',
+                          'surface-bright': '#31394d',
+                          'surface-variant': '#2d3449',
+                          'surface-tint': '#2fd9f4',
+                          'surface-container': '#171f33',
+                          'surface-container-low': '#131b2e',
+                          'surface-container-lowest': '#060e20',
+                          'surface-container-high': '#222a3d',
+                          'surface-container-highest': '#2d3449',
+                          'on-surface': '#dae2fd',
+                          'on-surface-variant': '#bbc9cd',
+                          'inverse-surface': '#dae2fd',
+                          'inverse-on-surface': '#283044',
+                          background: '#0b1326',
+                          'on-background': '#dae2fd',
+                          error: '#ffb4ab',
+                          'error-container': '#93000a',
+                          outline: '#859397',
+                          'outline-variant': '#3c494c'
+                      },
+                      fontSize: {
+                          'display-lg': ['48px', { lineHeight: '56px', letterSpacing: '-0.02em', fontWeight: '700' }],
+                          'headline-lg': ['32px', { lineHeight: '40px', letterSpacing: '-0.01em', fontWeight: '600' }],
+                          'headline-lg-mobile': ['24px', { lineHeight: '32px', fontWeight: '600' }],
+                          'headline-md': ['24px', { lineHeight: '32px', fontWeight: '500' }],
+                          'body-lg': ['18px', { lineHeight: '28px', fontWeight: '400' }],
+                          'body-md': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+                          'body-sm': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+                          'label-md': ['12px', { lineHeight: '16px', letterSpacing: '0.05em', fontWeight: '600' }],
+                          'mono-code': ['14px', { lineHeight: '22px', fontWeight: '400' }]
+                      },
+                      borderRadius: { 'DEFAULT': '0.25rem', 'lg': '0.5rem', 'xl': '0.75rem', 'full': '9999px' }
                   }
               }
           }
       </script>
       <style>
-          /* ===== PENHAN GLASSMORPHISM DESIGN SYSTEM ===== */
+          /* ===== LUMINA EDGE DESIGN SYSTEM ===== */
           ::-webkit-scrollbar { width: 5px; height: 5px; }
           ::-webkit-scrollbar-track { background: transparent; }
           ::-webkit-scrollbar-thumb { background: rgba(168, 85, 247, 0.3); border-radius: 10px; }
@@ -9535,20 +9580,28 @@ function getDashboardUI(hasDB) {
           body.logged-in .lock-pulse::before, body.logged-in .lock-pulse::after,
           body.logged-in .btn-shimmer::after, body.logged-in .animate-bounce { animation: none !important; }
 
-          /* ===== GLASS CARD SYSTEM ===== */
-          .glass-card {
-              background: rgba(20, 22, 36, 0.55) !important;
-              backdrop-filter: blur(20px) !important;
-              -webkit-backdrop-filter: blur(20px) !important;
-              border: 1px solid rgba(168, 85, 247, 0.12) !important;
-              border-radius: 16px !important;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-              transition: border-color 0.3s, box-shadow 0.3s;
+          /* ===== GLASS PANEL (Tier 1) ===== */
+          .glass-panel, .glass-card {
+              background: rgba(30, 41, 59, 0.7) !important;
+              backdrop-filter: blur(12px) !important;
+              -webkit-backdrop-filter: blur(12px) !important;
+              border: 1px solid rgba(255, 255, 255, 0.08) !important;
+              transition: all 0.3s ease;
           }
-          .glass-card:hover {
-              border-color: rgba(168, 85, 247, 0.25) !important;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(168, 85, 247, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+          .glass-panel:hover, .glass-card:hover {
+              border-color: rgba(47, 217, 244, 0.3) !important;
+              box-shadow: 0 0 20px rgba(47, 217, 244, 0.1) !important;
           }
+          .glass-row { transition: all 0.3s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+          .glass-row:hover { background: rgba(255, 255, 255, 0.03); box-shadow: inset 0 0 20px rgba(47, 217, 244, 0.05); }
+          @keyframes breathe { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+          .breathing-glow { animation: breathe 3s infinite ease-in-out; }
+          @keyframes pulse-cyan { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+          .breathing-status { animation: pulse-cyan 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+          .neon-line { filter: drop-shadow(0 0 8px rgba(47, 217, 244, 0.6)); }
+          .neon-border-focus:focus-within { border-color: #2fd9f4 !important; box-shadow: inset 0 0 8px rgba(47, 217, 244, 0.2), 0 0 12px rgba(47, 217, 244, 0.1) !important; }
+          .gradient-button { background: linear-gradient(135deg, #6f00be 0%, #2fd9f4 100%); transition: all 0.3s ease; }
+          .gradient-button:hover { box-shadow: 0 0 20px rgba(47, 217, 244, 0.4); transform: translateY(-1px); }
 
           /* ===== BUTTONS ===== */
           .btn-top-bar { transition: all 0.2s; border-color: rgba(255,255,255,0.08) !important; }
@@ -9569,72 +9622,30 @@ function getDashboardUI(hasDB) {
           .eye-btn:hover { color: #c084fc !important; }
           .eye-btn:not(:hover) { color: rgba(168,85,247,0.4) !important; }
 
-          /* ===== DARK MODE (DEFAULT — GLASSMORPHISM) ===== */
-          html.dark, html.dark body {
-              background: #06070d !important;
-              color: #e2e8f0 !important;
-          }
+          /* ===== LUMINA EDGE DARK MODE ===== */
+          body { background-color: #020617 !important; color: #dae2fd !important; font-family: 'Inter', 'Vazirmatn', sans-serif; overflow-x: hidden; }
+          [lang="fa"] body { font-family: 'Vazirmatn', 'Inter', sans-serif; }
+          html.dark body { background: #020617 !important; color: #dae2fd !important; }
           html.dark .bg-white, html.dark .bg-slate-50, html.dark .bg-indigo-50, html.dark .bg-darkcard {
-              background: rgba(20, 22, 36, 0.55) !important;
-              border: 1px solid rgba(168, 85, 247, 0.12) !important;
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
-              backdrop-filter: blur(20px) !important;
+              background: rgba(30, 41, 59, 0.7) !important;
+              border: 1px solid rgba(255, 255, 255, 0.08) !important;
+              backdrop-filter: blur(12px) !important;
           }
           html.dark aside {
-              background: rgba(10, 11, 20, 0.7) !important;
-              border-inline-end: 1px solid rgba(168, 85, 247, 0.1) !important;
+              background: rgba(11, 19, 38, 0.7) !important;
+              border-inline-end: 1px solid rgba(255, 255, 255, 0.08) !important;
               backdrop-filter: blur(24px) !important;
           }
-          html.dark .bg-gradient-to-br { background: rgba(10, 11, 20, 0.6) !important; backdrop-filter: blur(12px); }
-
-          /* ===== LIGHT MODE ===== */
-          html:not(.dark) { background: #f8fafc !important; color: #0f172a !important; }
-          html:not(.dark) body { background: #f8fafc !important; color: #0f172a !important; }
-          @media (max-width: 767px) { html:not(.dark) header { background: rgba(248,250,252,0.9) !important; } }
-          html:not(.dark) #login-box, html:not(.dark) #dash-box { background: #f8fafc !important; }
-          html:not(.dark) aside { background-color: #ffffff !important; border-inline-end: 1px solid #e2e8f0 !important; }
-          html:not(.dark) .bg-white { background-color: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important; }
-          html:not(.dark) input, html:not(.dark) select, html:not(.dark) textarea { background-color: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
-          html:not(.dark) input:focus, html:not(.dark) select:focus, html:not(.dark) textarea:focus { border-color: #a855f7 !important; box-shadow: 0 0 0 3px rgba(168,85,247,0.1) !important; outline: none !important; }
-          html:not(.dark) .text-slate-200, html:not(.dark) .text-slate-300 { color: #334155 !important; }
-          html:not(.dark) select option { background-color: #ffffff !important; color: #0f172a !important; }
-          html:not(.dark) #login-box [style*="radial-gradient"] { display: none !important; }
-          html:not(.dark) .rounded-3xl.p-px { background: #e2e8f0 !important; }
-          html:not(.dark) .rounded-3xl.p-px > div, html:not(.dark) .rounded-3xl.p-px > div[style*="background"] { background: #ffffff !important; }
-          html:not(.dark) #login-box .rounded-3xl.p-8, html:not(.dark) #login-box .rounded-3xl.p-px { background: #ffffff !important; border: 1px solid #e2e8f0 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.05) !important; }
-          html:not(.dark) #login-box h2 { color: #0f172a !important; }
-          html:not(.dark) #login-box p, html:not(.dark) #login-box label { color: #475569 !important; }
-          html:not(.dark) #login-box input { background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
-          html:not(.dark) #login-box .lock-pulse { background: rgba(168,85,247,0.08) !important; border: 1px solid rgba(168,85,247,0.2) !important; box-shadow: none !important; }
-          html:not(.dark) #login-box svg { color: #a855f7 !important; }
-          html:not(.dark) #login-box .border-bottom, html:not(.dark) #login-box [style*="border-bottom"] { border-bottom: 1px solid #e2e8f0 !important; }
-          html:not(.dark) #login-box span[style*="color:#4ade80"] { color: #16a34a !important; }
-          html:not(.dark) #login-box span[style*="color:#334155"] { color: #64748b !important; }
-          html:not(.dark) #top-version-badge { background-color: #f5f3ff !important; border-color: #e9d5ff !important; color: #9333ea !important; }
-          html:not(.dark) #github-link-btn, html:not(.dark) #lang-toggle { background-color: #ffffff !important; border-color: #e2e8f0 !important; color: #475569 !important; }
-          html:not(.dark) #github-link-btn:hover, html:not(.dark) #lang-toggle:hover { border-color: #c084fc !important; color: #9333ea !important; }
-          html:not(.dark) .nav-item.active { background: linear-gradient(90deg, rgba(168,85,247,0.08), transparent) !important; color: #9333ea !important; border-inline-start: 4px solid #a855f7 !important; }
-          html:not(.dark) .bg-emerald-500\/10 { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; color: #16a34a !important; }
-          html:not(.dark) .bg-amber-500\/10 { background-color: #fffbeb !important; border-color: #fef08a !important; color: #d97706 !important; }
-          html:not(.dark) .bg-indigo-500\/10 { background-color: #f5f3ff !important; border-color: #e9d5ff !important; color: #9333ea !important; }
-          html:not(.dark) .bg-violet-500\/10 { background-color: #f5f3ff !important; border-color: #ddd6fe !important; color: #7c3aed !important; }
-          html:not(.dark) .text-emerald-400 { color: #16a34a !important; }
-          html:not(.dark) .text-amber-400 { color: #d97706 !important; }
-          html:not(.dark) .text-indigo-400 { color: #9333ea !important; }
-          html:not(.dark) .text-violet-400 { color: #7c3aed !important; }
 
           /* ===== NAVIGATION ===== */
-          .nav-item { border-inline-start: 4px solid transparent; transition: all 0.2s; }
-          .nav-item:hover { background: rgba(168, 85, 247, 0.05) !important; }
-          .nav-item.active { background: linear-gradient(90deg, rgba(168,85,247,0.15), transparent) !important; color: #c084fc !important; border-inline-start: 4px solid #a855f7 !important; font-weight: 700; }
-          .dark .nav-item.active { background: linear-gradient(90deg, rgba(168,85,247,0.15), transparent) !important; color: #c084fc !important; border-inline-start: 4px solid #a855f7 !important; }
-          .mobile-nav-item.active { color: #c084fc; }
-          .dark .mobile-nav-item.active { color: #c084fc; }
+          .nav-item { transition: all 0.2s; border-inline-start: 3px solid transparent; }
+          .nav-item:hover { background: rgba(255, 255, 255, 0.05) !important; }
+          .nav-item.active { background: rgba(47, 217, 244, 0.1) !important; color: #8aebff !important; border-inline-start: 3px solid #22d3ee !important; box-shadow: 0 0 15px rgba(47, 217, 244, 0.2); font-weight: 600; }
+          .mobile-nav-item.active { color: #8aebff; }
 
-          /* ===== DECORATIVE BLOBS ===== */
-          .penhan-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.15; pointer-events: none; }
-          .penhan-blob-1 { width: 400px; height: 400px; background: #a855f7; animation: float 20s ease-in-out infinite; top: -100px; right: -100px; }
-          .penhan-blob-2 { width: 350px; height: 350px; background: #22d3ee; animation: float2 25s ease-in-out infinite; bottom: -80px; left: -80px; }
+          /* ===== NO SCROLLBAR ===== */
+          .no-scrollbar::-webkit-scrollbar { display: none; }
+          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
           /* ===== MOBILE NATIVE ===== */
           @media (max-width: 767px) {
@@ -9642,34 +9653,23 @@ function getDashboardUI(hasDB) {
               html { overscroll-behavior: none; -webkit-text-size-adjust: 100%; }
               body { overscroll-behavior: none; -webkit-overflow-scrolling: touch; touch-action: manipulation; }
               .mobile-bottom-nav {
-                  background: rgba(10, 11, 20, 0.85) !important;
+                  background: rgba(11, 19, 38, 0.85) !important;
                   backdrop-filter: saturate(180%) blur(20px) !important;
                   -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-                  border-top: 0.5px solid rgba(168, 85, 247, 0.1) !important;
-              }
-              html:not(.dark) .mobile-bottom-nav {
-                  background: rgba(255,255,255,0.9) !important;
-                  backdrop-filter: saturate(180%) blur(20px) !important;
-                  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-                  border-top: 0.5px solid rgba(0,0,0,0.08) !important;
+                  border-top: 0.5px solid rgba(255, 255, 255, 0.08) !important;
               }
               .mobile-tab-item { position: relative; transition: color 0.15s ease; padding: 4px 0; }
-              .mobile-tab-item.active { color: #c084fc; }
-              .mobile-tab-item.active::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: linear-gradient(90deg, #a855f7, #22d3ee); border-radius: 1px; }
-              .mobile-tab-item svg { width: 22px; height: 22px; transition: transform 0.15s ease; }
-              .mobile-tab-item.active svg { transform: scale(1.08); }
+              .mobile-tab-item.active { color: #8aebff; }
+              .mobile-tab-item.active::before { content: ''; position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #22d3ee; border-radius: 1px; }
+              .mobile-tab-item svg, .mobile-tab-item .material-symbols-outlined { transition: transform 0.15s ease; }
+              .mobile-tab-item.active .material-symbols-outlined { transform: scale(1.08); }
               .mobile-tab-item span { font-size: 10px; font-weight: 600; letter-spacing: 0.01em; }
               .mobile-save-bar {
-                  background: rgba(10, 11, 20, 0.9) !important;
+                  background: rgba(11, 19, 38, 0.9) !important;
                   backdrop-filter: saturate(180%) blur(20px) !important;
                   -webkit-backdrop-filter: saturate(180%) blur(20px) !important;
-                  border-top: 0.5px solid rgba(168, 85, 247, 0.1) !important;
+                  border-top: 0.5px solid rgba(255, 255, 255, 0.08) !important;
                   padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-              }
-              html:not(.dark) .mobile-save-bar {
-                  background: rgba(255,255,255,0.95) !important;
-                  backdrop-filter: saturate(180%) blur(20px) !important;
-                  border-top: 0.5px solid rgba(0,0,0,0.08) !important;
               }
               .scroll-content { -webkit-overflow-scrolling: touch; scroll-behavior: smooth; overscroll-behavior-y: contain; }
               .native-press { transition: transform 0.12s ease, opacity 0.12s ease; }
@@ -9679,16 +9679,16 @@ function getDashboardUI(hasDB) {
           }
       </style>
   </head>
-  <body class="text-slate-800 dark:text-slate-200 h-[100dvh] flex flex-col md:flex-row overflow-hidden selection:bg-primary selection:text-white transition-colors duration-300 bg-slate-50 dark:bg-darkbg">
+  <body class="text-on-surface h-[100dvh] flex flex-col md:flex-row overflow-hidden selection:bg-primary/30 bg-background">
 
       <!-- Global Controls -->
       <div class="fixed top-4 end-4 md:top-5 md:end-5 flex items-center gap-2 z-50">
-          <span id="top-version-badge" class="hidden md:inline-flex items-center px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold glass-card" style="color:#c084fc;">v${CURRENT_VERSION}</span>
+          <span id="top-version-badge" class="hidden md:inline-flex items-center px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold glass-panel" style="color:#8aebff;">v${CURRENT_VERSION}</span>
           <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="hidden md:inline-flex btn-top-bar p-2 rounded-xl transition-all glass-card">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
           </a>
-          <button onclick="toggleLang()" id="lang-toggle" class="btn-top-bar px-3 py-1.5 rounded-xl text-sm font-bold transition-all glass-card" style="color:#e2e8f0;">EN</button>
-          <button onclick="toggleTheme()" class="btn-top-bar p-2 rounded-xl transition-all glass-card" style="color:#f59e0b;">
+          <button onclick="toggleLang()" id="lang-toggle" class="btn-top-bar px-3 py-1.5 rounded-xl text-sm font-bold transition-all glass-panel" style="color:#dae2fd;">EN</button>
+          <button onclick="toggleTheme()" class="btn-top-bar p-2 rounded-xl transition-all glass-panel" style="color:#f59e0b;">
               <svg class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
               <svg class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           </button>
@@ -9697,64 +9697,61 @@ function getDashboardUI(hasDB) {
           </button>
       </div>
 
-      <!-- LOGIN SCREEN -->
-      <div id="login-box" class="absolute inset-0 flex items-center justify-center p-4 z-40 overflow-hidden" style="background:#06070d;">
-          <!-- Decorative blobs -->
-          <div class="penhan-blob penhan-blob-1"></div>
-          <div class="penhan-blob penhan-blob-2"></div>
-          <div class="absolute pointer-events-none" style="width:600px;height:600px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(168,85,247,0.06) 0%,transparent 60%);"></div>
-          <!-- Dot grid pattern -->
-          <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image:radial-gradient(circle,#a855f7 1px,transparent 1px);background-size:32px 32px;"></div>
-          <div class="relative w-full max-w-sm">
-              <style>
-                  @keyframes pulse-ring{0%{transform:scale(1);opacity:0.4}100%{transform:scale(1.6);opacity:0}}
-                  @keyframes shimmer{0%{left:-100%}100%{left:100%}}
-                  @keyframes icon-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-                  .lock-pulse::before,.lock-pulse::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(168,85,247,0.3);animation:pulse-ring 2.5s ease-out infinite;}
-                  .lock-pulse::after{animation-delay:1.25s;}
-                  .btn-shimmer::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);animation:shimmer 3s ease-in-out infinite;}
-              </style>
-              <div class="text-center mb-8">
-                  <!-- Penhan Logo -->
-                  <div class="relative inline-flex items-center justify-center mb-6">
-                      <div class="lock-pulse relative w-24 h-24 rounded-[28px] flex items-center justify-center" style="background:linear-gradient(145deg,rgba(168,85,247,0.2),rgba(34,211,238,0.1));border:1px solid rgba(168,85,247,0.35);box-shadow:0 0 50px rgba(168,85,247,0.2),0 0 100px rgba(168,85,247,0.05),inset 0 1px 0 rgba(255,255,255,0.06);">
-                          <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" style="animation:icon-float 3s ease-in-out infinite;">
-                              <defs><linearGradient id="penhan-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs>
-                              <path d="M3 12c2.5-5 7-8 9-8s6.5 3 9 8c-2.5 5-7 8-9 8s-6.5-3-9-8z" stroke="url(#penhan-logo-grad)" stroke-width="1.5" fill="none"/>
-                              <circle cx="12" cy="12" r="3" fill="url(#penhan-logo-grad)" opacity="0.8"/>
-                              <line x1="3" y1="3" x2="21" y2="21" stroke="url(#penhan-logo-grad)" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
-                          </svg>
-                      </div>
+      <!-- LOGIN SCREEN — Lumina Edge -->
+      <div id="login-box" class="absolute inset-0 flex flex-col items-center justify-center p-4 z-40 overflow-hidden particle-canvas">
+          <div class="relative w-full max-w-[480px]">
+              <!-- Server Icon -->
+              <div class="flex flex-col items-center mb-8">
+                  <div class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(47,217,244,0.15)]">
+                      <span class="material-symbols-outlined text-primary-container text-3xl" style="font-variation-settings:'FILL' 1;">dns</span>
                   </div>
-                  <h2 class="text-3xl font-black" style="background:linear-gradient(135deg,#c084fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-i18n="title">Penhan Gateway</h2>
-                  <p class="text-xs mt-2 font-mono tracking-widest uppercase" style="color:rgba(168,85,247,0.5);">penhan</p>
-                  <p class="text-sm mt-3" style="color:#64748b;">Sign in to manage your gateway</p>
+                  <h1 class="text-2xl font-bold text-on-surface" data-i18n="title">Penhan</h1>
+                  <p class="text-sm text-on-surface-variant mt-1">Enterprise Tier Infrastructure Gateway</p>
               </div>
-              <!-- Glass card -->
-              <div class="glass-card rounded-3xl p-8" style="box-shadow:0 25px 60px rgba(0,0,0,0.5),0 0 40px rgba(168,85,247,0.06);">
-                  <div class="flex items-center gap-2 mb-7 pb-6" style="border-bottom:1px solid rgba(168,85,247,0.08);">
-                      <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#10b981;box-shadow:0 0 8px rgba(16,185,129,0.5);"></span>
-                      <span class="text-xs" style="color:#10b981;">System online</span>
-                      <span class="flex-1"></span>
-                      <span class="text-xs" style="color:#475569;">&#128274; Secure connection</span>
-                  </div>
-                  ${!hasDB ? `<div class="mb-5 p-4 rounded-2xl flex items-start gap-3" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);"><span style="color:#f87171;">&#9888;&#65039;</span><span class="text-sm" style="color:#fca5a5;" data-i18n="missing_db">Database not connected. Settings won't be saved.</span></div>` : ""}
+              <!-- Login Form -->
+              <div class="glass-panel rounded-2xl p-8">
+                  <!-- Username -->
                   <div class="mb-5">
-                      <label class="block text-sm font-semibold mb-2.5" style="color:#94a3b8;" data-i18n="login_password">Password</label>
-                      <div class="relative">
-                          <div class="absolute inset-y-0 start-0 flex items-center ps-4" style="color:rgba(168,85,247,0.6);">
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                      <label class="block text-[11px] uppercase tracking-widest font-bold text-on-surface-variant mb-2" data-i18n="login_password">SECRET KEY</label>
+                      <div class="relative neon-border-focus rounded-xl">
+                          <div class="absolute inset-y-0 start-0 flex items-center ps-4 text-on-surface-variant/50">
+                              <span class="material-symbols-outlined text-lg">key</span>
                           </div>
-                          <input type="password" id="pwd" data-i18n="pass_ph" placeholder="Enter your password" class="login-input w-full ps-11 pe-12 py-3.5 text-sm rounded-2xl outline-none transition-all" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:#e2e8f0;">
-                          <button type="button" onclick="const n=document.getElementById('pwd');n.type=n.type==='password'?'text':'password'" class="eye-btn absolute inset-y-0 end-0 flex items-center px-4 transition-colors" style="color:rgba(168,85,247,0.4);">
-                              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                          <input type="password" id="pwd" data-i18n="pass_ph" placeholder="••••••••••••••••" class="login-input w-full ps-12 pe-12 py-3.5 text-sm rounded-xl outline-none text-on-surface border border-white/5">
+                          <button type="button" onclick="const n=document.getElementById('pwd');n.type=n.type==='password'?'text':'password'" class="eye-btn absolute inset-y-0 end-0 flex items-center px-4">
+                              <span class="material-symbols-outlined text-lg">visibility</span>
                           </button>
                       </div>
                   </div>
-                  <p id="err-msg" class="hidden text-sm mb-4 flex items-center gap-2 px-3 py-2.5 rounded-xl" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.15);color:#f87171;"><span>&#9888;&#65039;</span><span data-i18n="err_pass">Wrong password, please try again.</span></p>
-                  <button onclick="doLogin()" class="login-btn btn-shimmer w-full py-3.5 rounded-2xl font-bold text-sm relative overflow-hidden transition-all" style="background:linear-gradient(135deg,#a855f7,#7c3aed,#6366f1);color:white;box-shadow:0 4px 20px rgba(168,85,247,0.3),inset 0 1px 0 rgba(255,255,255,0.08);" data-i18n="login_btn">
-                      Sign In
+                  <!-- Error -->
+                  <p id="err-msg" class="hidden text-sm mb-4 flex items-center gap-2 px-3 py-2.5 rounded-xl bg-error/10 border border-error/20 text-error"><span>&#9888;&#65039;</span><span data-i18n="err_pass">Wrong password, please try again.</span></p>
+                  <!-- DB Warning -->
+                  ${!hasDB ? `<div class="mb-5 p-4 rounded-xl flex items-start gap-3 bg-error/10 border border-error/20"><span class="material-symbols-outlined text-error">warning</span><span class="text-sm text-on-surface-variant" data-i18n="missing_db">Database not connected. Settings won't be saved.</span></div>` : ""}
+                  <!-- Enter Button -->
+                  <button onclick="doLogin()" class="gradient-button w-full py-4 rounded-xl font-bold text-sm text-on-surface relative overflow-hidden flex items-center justify-center gap-2" data-i18n="login_btn">
+                      Enter Dashboard <span class="material-symbols-outlined text-lg">arrow_forward</span>
                   </button>
+                  <!-- Divider -->
+                  <div class="flex items-center gap-3 my-5">
+                      <div class="flex-1 h-px bg-white/10"></div>
+                      <span class="text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-bold">SECURITY PROTOCOL VERIFIED</span>
+                      <div class="flex-1 h-px bg-white/10"></div>
+                  </div>
+                  <!-- SSO / Passkey -->
+                  <div class="grid grid-cols-2 gap-3">
+                      <button class="py-2.5 rounded-xl bg-white/5 border border-white/5 text-on-surface-variant text-sm font-medium hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                          <span class="material-symbols-outlined text-lg">shield</span> SSO
+                      </button>
+                      <button class="py-2.5 rounded-xl bg-white/5 border border-white/5 text-on-surface-variant text-sm font-medium hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                          <span class="material-symbols-outlined text-lg">fingerprint</span> Passkey
+                      </button>
+                  </div>
+              </div>
+              <!-- Footer -->
+              <div class="flex items-center justify-center gap-4 mt-6 text-[11px] text-on-surface-variant/40">
+                  <a href="#" class="hover:text-primary transition-colors">Status</a>
+                  <a href="#" class="hover:text-primary transition-colors">Privacy</a>
+                  <a href="#" class="hover:text-primary transition-colors">Terms</a>
               </div>
           </div>
       </div>
@@ -9762,43 +9759,43 @@ function getDashboardUI(hasDB) {
       <!-- DASHBOARD CONTAINER -->
       <div id="dash-box" class="hidden w-full h-full flex-col md:flex-row relative dash-box-native" style="padding-top: env(safe-area-inset-top, 0px);">
 
-          <!-- SIDEBAR (Desktop) -->
-          <aside class="hidden md:flex w-64 bg-white dark:bg-[rgba(10,11,20,0.7)] border-e border-slate-200 dark:border-[rgba(168,85,247,0.1)] flex-col z-20 shrink-0" style="backdrop-filter:blur(24px);">
-              <div class="flex items-center p-6 border-b border-slate-100 dark:border-darkborder/50">
-                  <div class="w-10 h-10 rounded-[14px] flex items-center justify-center me-3 shrink-0" style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(34,211,238,0.1));border:1px solid rgba(168,85,247,0.25);">
-                      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="ph-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#a855f7"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient></defs><path d="M3 12c2.5-5 7-8 9-8s6.5 3 9 8c-2.5 5-7 8-9 8s-6.5-3-9-8z" stroke="url(#ph-grad)" stroke-width="1.5" fill="none"/><circle cx="12" cy="12" r="3" fill="url(#ph-grad)" opacity="0.8"/><line x1="3" y1="3" x2="21" y2="21" stroke="url(#ph-grad)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/></svg>
+          <!-- SIDEBAR (Desktop) — Lumina Edge -->
+          <aside class="hidden md:flex w-64 flex-col p-4 gap-8 h-screen border-r border-white/10 bg-surface/70 backdrop-blur-xl shadow-2xl shadow-primary/5 z-50 shrink-0">
+              <div class="flex items-center gap-3 px-2">
+                  <div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center shadow-[0_0_15px_rgba(47,217,244,0.3)]">
+                      <span class="material-symbols-outlined text-on-primary-container text-2xl" style="font-variation-settings:'FILL' 1;">dns</span>
                   </div>
-                  <div class="flex flex-col">
-                      <h1 class="font-black text-xl leading-none" style="background:linear-gradient(135deg,#c084fc,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" data-i18n="title">Nahan</h1>
-                      <span id="app-version" class="text-[10px] font-mono mt-1 font-semibold" style="color:rgba(168,85,247,0.5);">v${CURRENT_VERSION}</span>
+                  <div>
+                      <h1 class="text-headline-md font-bold text-primary leading-none" data-i18n="title">نهان</h1>
+                      <span id="app-version" class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold mt-1 block">Enterprise v${CURRENT_VERSION}</span>
                   </div>
               </div>
               <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                  <button onclick="switchTab('overview')" id="tab-overview" class="nav-item active flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('overview')" id="tab-overview" class="nav-item active flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_overview">Overview</span>
                   </button>
-                  <button onclick="switchTab('info')" id="tab-info" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('info')" id="tab-info" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
                       <span class="font-semibold" data-i18n="tab_info">Endpoints</span>
                   </button>
-                  <button onclick="switchTab('network')" id="tab-network" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('network')" id="tab-network" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_status">Metrics</span>
                   </button>
-                  <button onclick="switchTab('settings')" id="tab-settings" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('settings')" id="tab-settings" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_settings">System</span>
                   </button>
-                  <button onclick="switchTab('advanced')" id="tab-advanced" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('advanced')" id="tab-advanced" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_adv">Advanced</span>
                   </button>
-                  <button onclick="switchTab('logs')" id="tab-logs" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('logs')" id="tab-logs" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
                       <span class="font-semibold" data-i18n="tab_logs">Activity logs</span>
                   </button>
-                  <button onclick="switchTab('users')" id="tab-users" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                  <button onclick="switchTab('users')" id="tab-users" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-primary group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_users">Users</span>
                   </button>
@@ -9813,8 +9810,8 @@ function getDashboardUI(hasDB) {
 
           <!-- MAIN CONTENT AREA -->
           <main class="flex-1 flex flex-col h-full overflow-hidden">
-              <header class="h-14 md:h-24 shrink-0 flex items-center px-4 md:px-10 z-10 pt-[env(safe-area-inset-top,0px)] md:pt-0 bg-slate-50/75 dark:bg-[#06070d]/75 border-b border-slate-200/50 dark:border-[rgba(168,85,247,0.08)]" style="backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);">
-                  <h2 id="view-title" class="text-lg md:text-3xl font-black text-slate-800 dark:text-white mt-0 md:mt-2">Overview</h2>
+              <header class="h-14 md:h-24 shrink-0 flex items-center px-4 md:px-10 z-10 pt-[env(safe-area-inset-top,0px)] md:pt-0 bg-surface/70 border-b border-white/5" style="backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);">
+                  <h2 id="view-title" class="text-lg md:text-headline-lg font-bold text-on-surface mt-0 md:mt-2">Overview</h2>
               </header>
 
               <!-- Scrollable Content -->
@@ -9877,35 +9874,35 @@ function getDashboardUI(hasDB) {
                       <div id="view-overview" class="space-y-3 md:space-y-6 block">
                           <!-- User Summary Cards -->
                           <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4">
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-4">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-4">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_total_users">Total Users</span>
                                       <div class="p-1.5 md:p-2 bg-primary/10 text-primary rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656-.126-1.283-.356-1.857M12 4.354a4 4 0 110 5.292"></path></svg></div>
                                   </div>
                                   <p id="ov-total-users" class="text-xl md:text-2xl font-black text-slate-800 dark:text-white">-</p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-4">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-4">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_active_users">Active</span>
                                       <div class="p-1.5 md:p-2 bg-emerald-500/10 text-emerald-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                   </div>
                                   <p id="ov-active-users" class="text-xl md:text-2xl font-black text-emerald-600 dark:text-emerald-400">-</p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-4">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-4">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_paused_users">Paused</span>
                                       <div class="p-1.5 md:p-2 bg-amber-500/10 text-amber-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
                                   </div>
                                   <p id="ov-paused-users" class="text-xl md:text-2xl font-black text-amber-600 dark:text-amber-400">-</p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-4">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-4">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_auto_disabled">Auto-Disabled</span>
                                       <div class="p-1.5 md:p-2 bg-red-500/10 text-red-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg></div>
                                   </div>
                                   <p id="ov-auto-disabled" class="text-xl md:text-2xl font-black text-red-600 dark:text-red-400">-</p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-4">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-4">
                                   <div class="flex items-center justify-between mb-1 md:mb-2">
                                       <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-wider" data-i18n="ov_expired_users">Expired</span>
                                       <div class="p-1.5 md:p-2 bg-slate-500/10 text-slate-500 rounded-md md:rounded-lg"><svg class="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
@@ -9916,7 +9913,7 @@ function getDashboardUI(hasDB) {
 
                           <!-- Traffic & System Cards -->
                           <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4">
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-5">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-5">
                                   <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
                                       <div class="p-1.5 md:p-2.5 bg-violet-500/10 text-violet-500 rounded-lg md:rounded-xl"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg></div>
                                        <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="ov_total_traffic">Total Traffic</span>
@@ -9924,7 +9921,7 @@ function getDashboardUI(hasDB) {
                                    <p id="ov-total-traffic" class="text-base md:text-xl font-black text-slate-800 dark:text-white">- GB</p>
                                   <p class="text-[9px] md:text-[10px] text-slate-400 mt-0.5 md:mt-1"><span id="ov-total-reqs">-</span> <span data-i18n="ov_requests">requests</span></p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-5">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-5">
                                   <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
                                       <div class="p-1.5 md:p-2.5 bg-cyan-500/10 text-cyan-500 rounded-lg md:rounded-xl"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg></div>
                                        <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="ov_today_traffic">Today's Traffic</span>
@@ -9932,14 +9929,14 @@ function getDashboardUI(hasDB) {
                                   <p id="ov-today-traffic" class="text-base md:text-xl font-black text-slate-800 dark:text-white">- GB</p>
                                   <p class="text-[9px] md:text-[10px] text-slate-400 mt-0.5 md:mt-1"><span id="ov-today-reqs">-</span> <span data-i18n="ov_requests">requests</span></p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-5">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-5">
                                   <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
                                       <div class="p-1.5 md:p-2.5 bg-blue-500/10 text-blue-500 rounded-lg md:rounded-xl"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a5 5 0 010-7.07m7.072 0a5 5 0 010 7.07M13 12a1 1 0 11-2 0 1 1 0 012 0z"></path></svg></div>
                                        <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="ov_active_conns">Active Connections</span>
                                   </div>
                                   <p id="ov-active-conns" class="text-base md:text-xl font-black text-slate-800 dark:text-white">-</p>
                               </div>
-                              <div class="native-press glass-card rounded-xl md:rounded-2xl p-3 md:p-5">
+                              <div class="native-press glass-panel rounded-xl md:rounded-2xl p-3 md:p-5">
                                   <div class="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
                                       <div class="p-1.5 md:p-2.5 bg-primary/10 text-primary rounded-lg md:rounded-xl"><svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
                                        <span class="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider" data-i18n="ov_system">System</span>
@@ -9951,7 +9948,7 @@ function getDashboardUI(hasDB) {
                           <!-- Recent Activity & Quick Actions Row -->
                           <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
                               <!-- Recent Activity -->
-                              <div class="lg:col-span-2 glass-card rounded-2xl md:rounded-3xl p-4 md:p-6">
+                              <div class="lg:col-span-2 glass-panel rounded-2xl md:rounded-3xl p-4 md:p-6">
                                   <div class="flex items-center justify-between mb-3 md:mb-4">
                                       <h3 class="text-xs md:text-sm uppercase font-bold text-slate-500 tracking-wider" data-i18n="ov_recent_activity">Recent Activity</h3>
                                       <button onclick="switchTab('logs')" class="text-[11px] md:text-xs text-primary hover:text-primary/80 font-bold transition-colors" data-i18n="ov_view_all">View All &rarr;</button>
@@ -9961,7 +9958,7 @@ function getDashboardUI(hasDB) {
                                   </div>
                               </div>
                               <!-- Quick Actions -->
-                              <div class="glass-card rounded-2xl md:rounded-3xl p-4 md:p-6">
+                              <div class="glass-panel rounded-2xl md:rounded-3xl p-4 md:p-6">
                                   <h3 class="text-xs md:text-sm uppercase font-bold text-slate-500 tracking-wider mb-3 md:mb-4" data-i18n="ov_quick_actions">Quick Actions</h3>
                                   <div class="grid grid-cols-2 gap-2 md:grid-cols-1 md:gap-3">
                                        <button onclick="openAddUserPage()" class="native-press flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 py-2.5 md:px-4 md:py-3 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg md:rounded-xl font-bold text-xs md:text-sm transition-colors">
@@ -9992,35 +9989,35 @@ function getDashboardUI(hasDB) {
 
                       <!-- NETWORK/METRICS VIEW -->
                       <div id="view-network" class="hidden space-y-6">
-                            <div class="glass-card rounded-3xl p-6 mb-6">
+                            <div class="glass-panel rounded-3xl p-6 mb-6">
                               <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider mb-4" data-i18n="metrics_live">Live Profile Usage</h3>
                               <div id="usage-metrics-container" class="flex flex-col">
                                   <p class="text-xs text-slate-400 text-center py-4" data-i18n="no_metrics">No active connection data yet.</p>
                               </div>
                           </div>
                           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                              <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
+                              <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group">
                                   <svg class="w-8 h-8 text-blue-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
                                   <p class="text-xs uppercase font-bold text-slate-400 mb-1" data-i18n="stat_ip">Origin IP</p>
                                   <p id="net-ip" class="text-xl md:text-2xl font-black font-mono">...</p>
                               </div>
-                              <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
+                              <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group">
                                   <svg class="w-8 h-8 text-emerald-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
                                   <p class="text-xs uppercase font-bold text-slate-400 mb-1" data-i18n="stat_dc">Edge Node</p>
                                   <p id="net-colo" class="text-xl md:text-2xl font-black font-mono">...</p>
                               </div>
-                              <div class="glass-card p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-1">
+                              <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-1">
                                   <svg class="w-8 h-8 text-purple-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                                   <p class="text-xs uppercase font-bold text-slate-400 mb-1" data-i18n="stat_loc">Data Region</p>
                                   <p id="net-loc" class="text-lg font-bold truncate">...</p>
                               </div>
-                              <div class="glass-card p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-1">
+                              <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-1">
                                   <svg class="w-8 h-8 text-blue-500 mb-4"  width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clock10-icon lucide-clock-10"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l-4-2"/></svg>
                                   <p class="text-xs uppercase font-bold text-slate-400 mb-1" data-i18n="stat_datetime">Date Time</p>
                                   <p id="net-datetime" class="text-lg font-bold truncate text-center"  dir="rtl">...</p>
                               </div>
                               <!-- Diagnostics Segment -->
-                              <div class="glass-card p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-3">
+                              <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group sm:col-span-2 lg:col-span-3">
                                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                       <div>
                                           <h3 class="text-sm uppercase font-bold text-slate-400 mb-1" data-i18n="ping_test_title">Latency Diagnostics</h3>
@@ -10054,7 +10051,7 @@ function getDashboardUI(hasDB) {
 
                       <!-- SETTINGS VIEW -->
                       <div id="view-settings" class="hidden">
-                          <div class="glass-card rounded-3xl p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div class="glass-panel rounded-3xl p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                               <div class="space-y-1">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_proto">Primary Display Mode</label>
                                   <select id="cfg-proto" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none appearance-none">
@@ -10234,7 +10231,7 @@ function getDashboardUI(hasDB) {
                                 </div>
 
                                 <!-- API Keys Management -->
-                                <div class="glass-card rounded-3xl p-6 md:col-span-2 space-y-4">
+                                <div class="glass-panel rounded-3xl p-6 md:col-span-2 space-y-4">
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200 flex items-center gap-2">
@@ -10255,7 +10252,7 @@ function getDashboardUI(hasDB) {
                                 </div>
 
                                 <!-- Import/Export Config Area -->
-                               <div class="glass-card rounded-3xl p-6 md:col-span-2 space-y-4">
+                               <div class="glass-panel rounded-3xl p-6 md:col-span-2 space-y-4">
                                   <h3 class="text-sm uppercase font-bold text-slate-400 tracking-wider" data-i18n="backup_restore_title">Backup & Restore</h3>
                                   <div class="flex flex-col sm:flex-row gap-4">
                                       <button onclick="exportConfig()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors text-sm" data-i18n="export_btn">
@@ -10274,7 +10271,7 @@ function getDashboardUI(hasDB) {
                       <div id="view-advanced" class="hidden space-y-4">
 
                           <!-- Section: Network & DNS -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🌐</span>
@@ -10317,7 +10314,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Proxy & Relay -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🔗</span>
@@ -10351,7 +10348,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Subscription -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">📝</span>
@@ -10392,7 +10389,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Protocol -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">⚡</span>
@@ -10444,7 +10441,7 @@ function getDashboardUI(hasDB) {
                            </div>
 
                           <!-- Section: Serverless Config -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">⚡</span>
@@ -10485,7 +10482,7 @@ function getDashboardUI(hasDB) {
 
                           <!-- Modal: Add Other Node -->
                            <div id="modal-add-node" class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 pb-4 sm:p-4 bg-slate-900/50 backdrop-blur-sm">
-                               <div class="glass-card rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[calc(100vh-2rem)] sm:max-h-[85vh] flex flex-col">
+                               <div class="glass-panel rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[calc(100vh-2rem)] sm:max-h-[85vh] flex flex-col">
                                   <div class="px-6 pt-6 pb-4">
                                       <h3 class="text-lg font-bold" data-i18n="add_node_title">Add External Node</h3>
                                       <p class="text-xs text-slate-400 mt-1" data-i18n="add_node_desc">Enter the URL and API Key of the external panel.</p>
@@ -10509,7 +10506,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Telegram -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🤖</span>
@@ -10543,7 +10540,7 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <!-- Section: Cloudflare -->
-                          <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+                          <div class="glass-panel rounded-2xl overflow-hidden" data-accordion>
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">☁️</span>
@@ -10599,7 +10596,7 @@ function getDashboardUI(hasDB) {
                           <!-- USERS VIEW -->
                       <div id="view-users" class="hidden space-y-4">
                           <!-- Compact Stats Bar -->
-                          <div class="glass-card rounded-2xl p-4 flex flex-wrap items-center gap-4 md:gap-6">
+                          <div class="glass-panel rounded-2xl p-4 flex flex-wrap items-center gap-4 md:gap-6">
                               <div class="flex items-center gap-2">
                                   <div class="p-1.5 bg-primary/10 text-primary rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
                                   <div><span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="stat_total_subscribers">Total</span><span id="stat-total-users" class="ms-1.5 text-sm font-black text-slate-800 dark:text-white">0</span></div>
@@ -10638,7 +10635,7 @@ function getDashboardUI(hasDB) {
                               </div>
                           </div>
 
-                          <div class="glass-card rounded-3xl p-4 md:p-6 relative overflow-hidden">
+                          <div class="glass-panel rounded-3xl p-4 md:p-6 relative overflow-hidden">
                               <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-4 md:mb-6 gap-3">
                                    <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider" data-i18n="sub_directory_title">Subscriber Directory</h3>
                                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -10661,7 +10658,7 @@ function getDashboardUI(hasDB) {
 
                        <!-- PAGE: Add User -->
                        <div id="view-add-user" class="hidden h-full flex flex-col">
-                           <div class="glass-card rounded-2xl md:rounded-3xl overflow-hidden flex flex-col flex-1 min-h-0">
+                           <div class="glass-panel rounded-2xl md:rounded-3xl overflow-hidden flex flex-col flex-1 min-h-0">
                                <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-darkborder shrink-0">
                                    <button onclick="closeAddUserPage()" class="native-press p-2 -ms-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -10760,7 +10757,7 @@ function getDashboardUI(hasDB) {
                                        </div>
                                    </div>
                                </div>
-                               <div class="px-5 py-4 border-t border-slate-100 dark:border-[rgba(168,85,247,0.08)] glass-card flex justify-between items-center shrink-0">
+                               <div class="px-5 py-4 border-t border-white/5 glass-panel flex justify-between items-center shrink-0">
                                    <button onclick="closeAddUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
                                    <button onclick="commitAddUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" data-i18n="save_btn_user">Save User</button>
                                </div>
@@ -10769,7 +10766,7 @@ function getDashboardUI(hasDB) {
 
                        <!-- PAGE: Edit User -->
                        <div id="view-edit-user" class="hidden h-full flex flex-col">
-                           <div class="glass-card rounded-2xl md:rounded-3xl overflow-hidden flex flex-col flex-1 min-h-0">
+                           <div class="glass-panel rounded-2xl md:rounded-3xl overflow-hidden flex flex-col flex-1 min-h-0">
                                <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-darkborder shrink-0">
                                    <button onclick="closeEditUserPage()" class="native-press p-2 -ms-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -10869,7 +10866,7 @@ function getDashboardUI(hasDB) {
                                        </div>
                                    </div>
                                </div>
-                               <div class="px-5 py-4 border-t border-slate-100 dark:border-[rgba(168,85,247,0.08)] glass-card flex justify-between items-center shrink-0">
+                               <div class="px-5 py-4 border-t border-white/5 glass-panel flex justify-between items-center shrink-0">
                                    <button onclick="closeEditUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
                                    <button onclick="commitEditUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" data-i18n="btn_save_changes">Save Changes</button>
                                </div>
@@ -10878,7 +10875,7 @@ function getDashboardUI(hasDB) {
 
                       <!-- LOGS VIEW -->
                       <div id="view-logs" class="hidden space-y-6">
-                          <div class="glass-card rounded-3xl p-6 relative overflow-hidden">
+                          <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
                               <div class="flex items-center justify-between mb-6">
                                   <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider" data-i18n="tab_logs">System Activity Logs</h3>
                                   <button onclick="loadLogs()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold transition-colors">
@@ -10894,15 +10891,15 @@ function getDashboardUI(hasDB) {
               </div>
 
               <!-- Save Bar (Docked to bottom of main content) -->
-              <div class="shrink-0 bg-white dark:bg-[#0a0b14] border-t border-slate-200 dark:border-[rgba(168,85,247,0.08)] p-4 flex justify-between md:justify-end items-center z-20 mobile-save-bar" style="backdrop-filter:blur(20px);">
-                  <span id="save-status" class="text-sm font-bold text-slate-500 md:me-4"></span>
-                  <button onclick="doSave()" class="native-press px-8 py-3 text-white font-bold rounded-xl shadow-lg transition-all" style="background:linear-gradient(135deg,#a855f7,#7c3aed);box-shadow:0 4px 20px rgba(168,85,247,0.3);" data-i18n="save_btn">Save Config</button>
+              <div class="shrink-0 bg-surface-container-low border-t border-white/5 p-4 flex justify-between md:justify-end items-center z-20 mobile-save-bar" style="backdrop-filter:blur(20px);">
+                  <span id="save-status" class="text-sm font-bold text-on-surface-variant md:me-4"></span>
+                  <button onclick="doSave()" class="native-press px-8 py-3 bg-primary text-surface font-bold rounded-lg shadow-[0_0_20px_rgba(47,217,244,0.4)] active:scale-95 transition-all" data-i18n="save_btn">Save Config</button>
               </div>
           </main>
 
           <!-- BOTTOM NAV (Mobile) -->
           <nav class="md:hidden w-full mobile-bottom-nav flex justify-around items-center z-30 shrink-0" style="height:calc(4rem + env(safe-area-inset-bottom, 0px));padding-bottom:env(safe-area-inset-bottom, 0px);">
-              <button onclick="switchTab('overview')" id="mob-tab-overview" class="mobile-tab-item mobile-nav-item active flex flex-col items-center justify-center w-full h-full text-slate-400">
+              <button onclick="switchTab('overview')" id="mob-tab-overview" class="mobile-tab-item mobile-nav-item active flex flex-col items-center justify-center w-full h-full text-on-surface-variant">
                   <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"></path></svg>
                   <span class="text-[10px] font-bold" data-i18n="tab_overview">Home</span>
               </button>
@@ -10940,7 +10937,7 @@ function getDashboardUI(hasDB) {
 
       <!-- QR Code Modal (Enhanced) -->
       <div id="qr-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
-          <div class="glass-card rounded-3xl p-8 max-w-sm w-full relative">
+          <div class="glass-panel rounded-3xl p-8 max-w-sm w-full relative">
               <button onclick="closeQRModal()" class="absolute top-4 end-4 text-slate-400 hover:text-slate-800 dark:hover:text-white">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               </button>
@@ -10957,7 +10954,7 @@ function getDashboardUI(hasDB) {
 
       <!-- Modal: Version Update Highlights -->
       <div id="modal-version-update" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[101] hidden items-center justify-center p-4">
-          <div class="glass-card rounded-3xl p-8 max-w-lg w-full relative overflow-hidden transform transition-all duration-300">
+          <div class="glass-panel rounded-3xl p-8 max-w-lg w-full relative overflow-hidden transform transition-all duration-300">
               <div class="absolute top-0 right-0 left-0 h-2 bg-gradient-to-r from-indigo-500 via-primary to-emerald-500"></div>
               <div class="flex items-center justify-between mb-6">
                   <div class="flex items-center gap-2.5">
@@ -11763,7 +11760,7 @@ function getDashboardUI(hasDB) {
                     let logsHtml = '';
                     data.logs.forEach(log => {
                         const dateStr = new Date(log.ts).toLocaleString('en-US', {hour12: false});
-                        logsHtml += \`<div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-darkborder/50 gap-2"><div><p class="text-sm font-bold text-slate-700 dark:text-slate-200">\${log.type}</p><p class="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs" title="\${log.detail}">\${log.detail}</p></div><span class="text-[10px] font-mono text-slate-400 glass-card px-2 py-1 rounded shrink-0">\${dateStr}</span></div>\`;
+                        logsHtml += \`<div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-darkborder/50 gap-2"><div><p class="text-sm font-bold text-slate-700 dark:text-slate-200">\${log.type}</p><p class="text-xs text-slate-500 truncate max-w-[200px] sm:max-w-xs" title="\${log.detail}">\${log.detail}</p></div><span class="text-[10px] font-mono text-slate-400 glass-panel px-2 py-1 rounded shrink-0">\${dateStr}</span></div>\`;
                     });
                     container.innerHTML = logsHtml;
                 } else {
@@ -12269,7 +12266,7 @@ function getDashboardUI(hasDB) {
                 let profilesHtml = '';
                 data.profiles.forEach(p => {
                             const isDef = p.name === 'Default';
-                            let html = \`<div class="glass-card rounded-3xl relative mb-4 break-inside-avoid inline-block w-full" data-accordion>
+                            let html = \`<div class="glass-panel rounded-3xl relative mb-4 break-inside-avoid inline-block w-full" data-accordion>
     <div class="absolute top-0 end-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] -z-10"></div>
     <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between p-5 md:p-6">
         <h3 class="text-lg font-bold text-slate-800 dark:text-white flex items-center">
@@ -12554,7 +12551,7 @@ function getDashboardUI(hasDB) {
                       rawSync += rawSync.includes('?') ? '&flag=a' : '?flag=a';
                   }
 
-                  tblHtml += \`<div class="native-press glass-card rounded-2xl p-4 hover:shadow-md transition-shadow">
+                  tblHtml += \`<div class="native-press glass-panel rounded-2xl p-4 hover:shadow-md transition-shadow">
                       <div class="flex items-center justify-between mb-3">
                           <div class="flex items-center gap-2 min-w-0 flex-1">
                               <span class="w-2 h-2 rounded-full shrink-0 \${u.isPaused ? (isAutoDisabled ? 'bg-red-500' : 'bg-amber-500') : (isExp ? 'bg-red-400' : 'bg-emerald-500')}"></span>
