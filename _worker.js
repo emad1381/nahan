@@ -7651,9 +7651,12 @@ async function buildServerlessJsonConfig(clientHost, targetSub = null) {
                 "finalQuery": true
             }
         ],
-        "queryStrategy": "UseSystem",
+        "queryStrategy": "UseIPv4v6",
         "useSystemHosts": true,
-        "serveStale": true
+        "serveStale": true,
+        "disableCache": false,
+        "disableFallback": false,
+        "tag": "dns_inbound"
     };
     
     // Build common inbound
@@ -7673,8 +7676,9 @@ async function buildServerlessJsonConfig(clientHost, targetSub = null) {
             },
             "streamSettings": {
                 "sockopt": {
-                    "tcpKeepAliveInterval": 1,
-                    "tcpKeepAliveIdle": 11
+                    "tcpKeepAliveInterval": 15,
+                    "tcpKeepAliveIdle": 60,
+                    "tcpFastOpen": true
                 }
             }
         }
@@ -7775,13 +7779,22 @@ async function buildServerlessJsonConfig(clientHost, targetSub = null) {
             "levels": {
                 "0": {
                     "uplinkOnly": 0,
-                    "downlinkOnly": 0
+                    "downlinkOnly": 0,
+                    "connIdle": 300,
+                    "handshake": 4,
+                    "bufferSize": 0
                 },
                 "1": {
                     "uplinkOnly": 0,
                     "downlinkOnly": 0,
-                    "connIdle": 12
+                    "connIdle": 60,
+                    "handshake": 4,
+                    "bufferSize": 0
                 }
+            },
+            "system": {
+                "statsOutboundUplink": true,
+                "statsOutboundDownlink": true
             }
         },
         "dns": dnsConfig,
@@ -7881,7 +7894,7 @@ async function buildServerlessJsonConfig(clientHost, targetSub = null) {
             }
         ],
         "routing": {
-            "domainStrategy": "IPOnDemand",
+            "domainStrategy": "IPIfNonMatch",
             "rules": routingRules
         }
     };
@@ -8230,15 +8243,18 @@ async function buildYamlProfile(
     return `mixed-port: 7890
 ipv6: true
 allow-lan: false
-unified-delay: false
+unified-delay: true
 log-level: warning
 mode: rule
+find-process-mode: off
 disable-keep-alive: false
 keep-alive-idle: 10
 keep-alive-interval: 15
 tcp-concurrent: true
+geodata-mode: true
 geo-auto-update: true
 geo-update-interval: 168
+global-client-fingerprint: chrome
 external-controller: 127.0.0.1:9090
 external-controller-cors:
   allow-origins:
@@ -8266,7 +8282,23 @@ dns:
   direct-nameserver:
     - "8.8.8.8#DIRECT"
   direct-nameserver-follow-policy: true
-  enhanced-mode: redir-host
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter:
+    - "*.ir"
+    - "*.fa"
+    - "geosite:ir"
+    - "geosite:private"
+    - "geosite:category-ads-all"
+    - "rule-set:ir"
+    - "+.stun.*.*"
+    - "+.stun.*.*.*"
+    - "time.*.com"
+    - "ntp.*.com"
+    - "+.market.xiaomi.com"
+    - "localhost.ptlogin2.qq.com"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
 
 tun:
   enable: true
@@ -8745,15 +8777,18 @@ async function buildClashJsonProfile(
         "mixed-port": 7890,
         ipv6: true,
         "allow-lan": false,
-        "unified-delay": false,
+        "unified-delay": true,
         "log-level": "warning",
         mode: "rule",
+        "find-process-mode": "off",
         "disable-keep-alive": false,
         "keep-alive-idle": 10,
         "keep-alive-interval": 15,
         "tcp-concurrent": true,
+        "geodata-mode": true,
         "geo-auto-update": true,
         "geo-update-interval": 168,
+        "global-client-fingerprint": "chrome",
         "external-controller": "127.0.0.1:9090",
         "external-controller-cors": {
             "allow-origins": ["*"],
@@ -8782,7 +8817,24 @@ async function buildClashJsonProfile(
             "nameserver-policy": {
                 "rule-set:ir": "8.8.8.8#DIRECT",
             },
-            "enhanced-mode": "redir-host",
+            "enhanced-mode": "fake-ip",
+            "fake-ip-range": "198.18.0.1/16",
+            "fake-ip-filter": [
+                "*.ir",
+                "*.fa",
+                "geosite:ir",
+                "geosite:private",
+                "geosite:category-ads-all",
+                "rule-set:ir",
+                "+.stun.*.*",
+                "+.stun.*.*.*",
+                "time.*.com",
+                "ntp.*.com",
+                "+.market.xiaomi.com",
+                "localhost.ptlogin2.qq.com",
+                "+.msftconnecttest.com",
+                "+.msftncsi.com",
+            ],
         },
         tun: {
             enable: true,
@@ -9240,6 +9292,10 @@ async function buildSingBoxJsonProfile(
                     detour: "direct",
                     tag: "dns-direct",
                 },
+                {
+                    address: "fakeip",
+                    tag: "dns-fakeip",
+                },
             ],
             rules: [
                 {
@@ -9272,9 +9328,23 @@ async function buildSingBoxJsonProfile(
                     action: "route",
                     server: "dns-direct",
                 },
+                {
+                    query_type: ["A", "AAAA"],
+                    server: "dns-fakeip",
+                },
             ],
             strategy: "prefer_ipv4",
             independent_cache: true,
+            cache_capacity: 4096,
+            optimistic: true,
+            reverse_mapping: true,
+            disable_cache: false,
+            disable_expire: false,
+            fakeip: {
+                enabled: true,
+                inet4_range: "198.18.0.0/15",
+                inet6_range: "fc00::/18",
+            },
         },
         inbounds: [
             {
@@ -9285,6 +9355,8 @@ async function buildSingBoxJsonProfile(
                 auto_route: true,
                 strict_route: true,
                 stack: "mixed",
+                dns_mode: "hijack",
+                dns_address: ["172.19.0.2"],
             },
             {
                 type: "mixed",
@@ -9312,6 +9384,8 @@ async function buildSingBoxJsonProfile(
                 url: "https://www.gstatic.com/generate_204",
                 interrupt_exist_connections: false,
                 interval: "30s",
+                tolerance: 50,
+                idle_timeout: "30m",
             },
         ],
         route: {
